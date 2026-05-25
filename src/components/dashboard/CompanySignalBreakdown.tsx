@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -11,7 +11,11 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import { MetricCell } from "@/components/ui/MetricCell";
+import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import { ANOMALY_TYPE_LABELS } from "@/lib/constants";
+import { CARD_DIVIDER, INLINE_TEXT_TAG, SECTION_LABEL } from "@/lib/cardVisuals";
+import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { AnomalyRecord } from "@/lib/types";
 import {
   countAnomalyTypesByRecord,
@@ -21,13 +25,16 @@ import {
   primaryAnomalyType,
 } from "@/lib/formatters";
 import {
+  chartActiveBar,
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
+  chartBarGradientUrl,
+  chartGradientIds,
   chartGridStroke,
   chartTooltipContentStyle,
   chartTooltipCursor,
-  chartTooltipItemStyle,
+  chartTooltipItemStyleAccent,
   chartTooltipLabelStyle,
 } from "@/lib/chartTheme";
 
@@ -40,15 +47,6 @@ interface CompanySignalBreakdownProps {
 
 function labelForType(type: string): string {
   return ANOMALY_TYPE_LABELS[type] ?? type.replace(/_/g, " ");
-}
-
-function InsightRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-white/5 bg-zinc-900/50 px-3 py-2.5">
-      <dt className="text-xs text-slate-500">{label}</dt>
-      <dd className="mt-1 text-sm font-medium text-slate-100">{value}</dd>
-    </div>
-  );
 }
 
 export function CompanySignalBreakdown({
@@ -106,11 +104,14 @@ export function CompanySignalBreakdown({
 
   const chartMinHeight = Math.max(200, chartData.length * 36);
   const hasSignals = Boolean(ticker) && chartData.length > 0;
+  const instanceId = useId();
+  const gradients = chartGradientIds(instanceId);
+  const barGradientFill = chartBarGradientUrl(gradients.bar);
 
   const body = (
     <>
       {loading && (
-        <p className="text-sm text-slate-500">Loading signal breakdown…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading signal breakdown…</p>
       )}
 
       {!loading && !ticker && (
@@ -119,7 +120,7 @@ export function CompanySignalBreakdown({
             fillHeight ? "min-h-[280px]" : "py-12"
           }`}
         >
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[var(--text-muted)]">
             Select a company to view signal mix.
           </p>
         </div>
@@ -131,7 +132,7 @@ export function CompanySignalBreakdown({
             fillHeight ? "min-h-[280px]" : "py-12"
           }`}
         >
-          <p className="max-w-xs text-sm text-slate-500">
+          <p className="max-w-xs text-sm text-[var(--text-muted)]">
             No anomaly signals available for this company.
           </p>
         </div>
@@ -142,17 +143,14 @@ export function CompanySignalBreakdown({
           <div className="flex min-h-0 flex-[1.2] flex-col">
             <div className="mb-3 flex shrink-0 flex-wrap gap-2">
               {chartData.slice(0, 4).map((d) => (
-                <span
-                  key={d.type}
-                  className="rounded-md border border-white/10 bg-zinc-900/60 px-2 py-1 text-xs text-slate-400"
-                >
+                <span key={d.type} className={INLINE_TEXT_TAG}>
                   {d.type}{" "}
-                  <span className="font-mono text-cyan-300/90">{d.count}</span>
+                  <span className={`${TYPE_DATA_ACCENT} ml-0.5`}>{d.count}</span>
                 </span>
               ))}
             </div>
             <div
-              className="min-h-[200px] w-full flex-1"
+              className="chart-embedded min-h-[200px] w-full flex-1"
               style={{ minHeight: chartMinHeight }}
             >
               <ResponsiveContainer width="100%" height="100%">
@@ -180,45 +178,45 @@ export function CompanySignalBreakdown({
                     axisLine={chartAxisLine}
                     tickLine={false}
                   />
+                  <ChartRechartsDefs barGradientId={gradients.bar} />
                   <Tooltip
                     cursor={chartTooltipCursor}
                     contentStyle={chartTooltipContentStyle}
                     labelStyle={chartTooltipLabelStyle}
-                    itemStyle={chartTooltipItemStyle}
+                    itemStyle={chartTooltipItemStyleAccent}
                   />
                   <Bar
                     dataKey="count"
-                    fill="rgba(34, 211, 238, 0.5)"
-                    radius={[0, 4, 4, 0]}
+                    fill={barGradientFill}
+                    radius={[0, 3, 3, 0]}
                     maxBarSize={22}
+                    activeBar={chartActiveBar}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-white/5 pt-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Signal Profile
-            </h3>
+          <div className={`shrink-0 border-t pt-4 ${CARD_DIVIDER}`}>
+            <h3 className={SECTION_LABEL}>Signal Profile</h3>
             <dl className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <InsightRow label="Dominant Signal" value={insights.dominant} />
-              <InsightRow
+              <MetricCell label="Dominant Signal" value={insights.dominant} />
+              <MetricCell
                 label="Signal Diversity"
                 value={`${insights.diversity} unique types`}
               />
-              <InsightRow
+              <MetricCell
                 label="Critical Events"
                 value={insights.criticalCount}
               />
-              <InsightRow label="Latest Signal" value={insights.latestSignal} />
+              <MetricCell label="Latest Signal" value={insights.latestSignal} />
             </dl>
           </div>
         </div>
       )}
 
       <p
-        className={`shrink-0 border-t border-white/5 pt-3 text-xs leading-relaxed text-slate-500 ${
+        className={`shrink-0 border-t pt-3 text-xs leading-relaxed text-[var(--text-muted)] ${CARD_DIVIDER} ${
           fillHeight ? "mt-auto" : hasSignals || (!loading && ticker) ? "mt-4" : ""
         }`}
       >

@@ -36,7 +36,7 @@ export function useBriefingsPageData() {
       const message =
         err instanceof ApiError
           ? err.message
-          : "Failed to load briefing events.";
+          : "Failed to load anomaly events for AI briefings.";
       setError(message);
     } finally {
       setLoading(false);

@@ -1,4 +1,4 @@
-import { AlertTriangle } from "lucide-react";
+import { IconAlert } from "@/components/icons";
 import { Button } from "./Button";
 
 interface ErrorStateProps {
@@ -13,11 +13,11 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-2xl border border-rose-500/20 bg-rose-950/20 px-6 py-12 text-center">
-      <AlertTriangle className="h-8 w-8 text-rose-400" />
+    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 rounded-2xl border border-[var(--critical-border)] bg-[var(--critical-bg)] px-6 py-12 text-center">
+      <IconAlert className="text-[var(--critical-text)]" size={32} />
       <div>
-        <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
-        <p className="mt-2 max-w-lg text-sm text-slate-400">{message}</p>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h2>
+        <p className="mt-2 max-w-lg text-sm text-[var(--text-muted)]">{message}</p>
       </div>
       {onRetry && (
         <Button variant="secondary" onClick={onRetry}>

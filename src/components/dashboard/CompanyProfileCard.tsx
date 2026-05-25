@@ -1,15 +1,19 @@
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { MetricCell } from "@/components/ui/MetricCell";
+import { RiskTierIndicator } from "@/components/ui/RiskTierIndicator";
+import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
+import { METRIC_CELL, SECTION_LABEL, metricValueClass } from "@/lib/cardVisuals";
+import { TYPE_DATA_ACCENT, TYPE_TICKER } from "@/lib/typography";
 import type { AnomalyRecord, AnomalySummary, CompanyProfile } from "@/lib/types";
 import {
   formatAnomalyRate,
   formatDate,
   formatScore,
   formatTicker,
+  getAnomalySeverity,
   getCompanyRiskRank,
   getRiskTier,
-  primaryAnomalyType,
-  riskTierStyles,
+  splitAnomalyTypes,
   toFiniteNumber,
 } from "@/lib/formatters";
 
@@ -19,27 +23,6 @@ interface CompanyProfileCardProps {
   tickerAnomalies?: AnomalyRecord[];
   loading?: boolean;
   fillHeight?: boolean;
-}
-
-function Metric({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-white/5 bg-zinc-900/50 px-3 py-2.5">
-      <dt className="text-xs uppercase tracking-wider text-slate-500">{label}</dt>
-      <dd
-        className={`mt-1 text-sm ${highlight ? "font-semibold text-cyan-300" : "text-slate-100"}`}
-      >
-        {value}
-      </dd>
-    </div>
-  );
 }
 
 export function CompanyProfileCard({
@@ -56,7 +39,7 @@ export function CompanyProfileCard({
         subtitle="Issuer risk and anomaly statistics"
         className="w-full"
       >
-        <p className="text-sm text-slate-500">Loading company profile…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading company profile…</p>
       </Card>
     );
   }
@@ -68,7 +51,7 @@ export function CompanyProfileCard({
         subtitle="Select a ticker to load issuer intelligence"
         className="w-full"
       >
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-[var(--text-muted)]">
           Choose a monitored company to view risk profile, ranking, and signal
           history.
         </p>
@@ -101,6 +84,10 @@ export function CompanyProfileCard({
         )[0]
     : null;
 
+  const latestSeverity = profile.latest_anomaly
+    ? getAnomalySeverity(profile.latest_anomaly.anomaly_score)
+    : null;
+
   return (
     <Card
       title="Company Intelligence Profile"
@@ -110,19 +97,22 @@ export function CompanyProfileCard({
     >
       <div className={`flex flex-col gap-4 ${fillHeight ? "min-h-0 flex-1" : ""}`}>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xl font-semibold text-slate-50">
+          <span className={`${TYPE_TICKER} text-xl`}>
             {formatTicker(profile.ticker)}
           </span>
-          <Badge className={riskTierStyles(tier)}>{tier} risk</Badge>
-          <span className="text-lg font-semibold text-cyan-300">
+          <RiskTierIndicator tier={tier} suffix="risk" />
+          <span className={`text-lg ${TYPE_DATA_ACCENT}`}>
             {formatAnomalyRate(profile.anomaly_rate)}
           </span>
         </div>
 
         <dl className="grid grid-cols-2 gap-2">
-          <Metric label="Observations" value={profile.row_count.toLocaleString()} />
-          <Metric label="Anomalies" value={String(profile.anomaly_count)} />
-          <Metric
+          <MetricCell
+            label="Observations"
+            value={profile.row_count.toLocaleString()}
+          />
+          <MetricCell label="Anomalies" value={String(profile.anomaly_count)} />
+          <MetricCell
             label="Risk rank"
             value={
               rank
@@ -131,8 +121,8 @@ export function CompanyProfileCard({
             }
             highlight
           />
-          <Metric label="Min score" value={formatScore(minScore)} highlight />
-          <Metric
+          <MetricCell label="Min score" value={formatScore(minScore)} highlight />
+          <MetricCell
             label="Latest anomaly"
             value={
               profile.latest_anomaly
@@ -140,7 +130,7 @@ export function CompanyProfileCard({
                 : "—"
             }
           />
-          <Metric
+          <MetricCell
             label="Most severe"
             value={
               mostSevereDate
@@ -150,34 +140,32 @@ export function CompanyProfileCard({
           />
         </dl>
 
-        <div className="rounded-lg border border-white/5 bg-zinc-900/40 px-3 py-2.5 text-xs text-slate-400">
-          <span className="font-medium text-slate-500">Coverage: </span>
+        <div className={`${METRIC_CELL} px-3 py-2.5 text-xs text-[var(--text-secondary)]`}>
+          <span className={SECTION_LABEL}>Coverage: </span>
           {formatDate(profile.first_date)} — {formatDate(profile.last_date)}
         </div>
 
         {profile.latest_anomaly && (
-          <div className="rounded-xl border border-cyan-500/10 bg-cyan-500/5 px-3 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Latest signal
-            </p>
+          <div className={`${METRIC_CELL} px-3 py-3`}>
+            <p className={SECTION_LABEL}>Latest signal</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span className="text-sm text-slate-200">
+              <span className="text-sm text-[var(--text-primary)]">
                 {formatDate(String(profile.latest_anomaly.date))}
               </span>
-              <span className="font-mono text-sm text-cyan-300">
+              <span
+                className={`text-sm ${metricValueClass(latestSeverity)}`}
+              >
                 {formatScore(profile.latest_anomaly.anomaly_score)}
               </span>
-              <Badge className="border-white/10 bg-zinc-800 text-slate-300 normal-case">
-                {primaryAnomalyType(
-                  String(profile.latest_anomaly.anomaly_type),
-                ).replace(/_/g, " ")}
-              </Badge>
+              <AnomalyTypeTags
+                types={splitAnomalyTypes(String(profile.latest_anomaly.anomaly_type))}
+              />
             </div>
           </div>
         )}
 
         <p
-          className={`text-xs leading-relaxed text-slate-600 ${
+          className={`text-xs leading-relaxed text-[var(--text-muted)] ${
             fillHeight ? "mt-auto" : ""
           }`}
         >

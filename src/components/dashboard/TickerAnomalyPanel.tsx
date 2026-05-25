@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
+import { METRIC_CELL, metricValueClass } from "@/lib/cardVisuals";
 import type { AnomalyRecord } from "@/lib/types";
 import {
   anomalyRecordsMatch,
@@ -9,7 +10,7 @@ import {
   formatTicker,
   getAnomalySeverity,
   primaryAnomalyType,
-  severityStyles,
+  formatAnomalyTypeLabel,
   toFiniteNumber,
 } from "@/lib/formatters";
 
@@ -40,19 +41,20 @@ export function TickerAnomalyPanel({
   return (
     <Card
       title={`${formatTicker(ticker)} Anomalies`}
-      subtitle="Select a date for executive briefing generation"
+      subtitle="Select a date for AI briefing generation"
     >
       {loading && (
-        <p className="text-sm text-slate-500">Loading ticker anomalies…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading ticker anomalies…</p>
       )}
       {!loading && sorted.length === 0 && (
-        <p className="text-sm text-slate-500">No anomaly records for this ticker.</p>
+        <p className="text-sm text-[var(--text-muted)]">No anomaly records for this ticker.</p>
       )}
       {!loading && sorted.length > 0 && (
         <ul className="flex flex-col gap-2">
           {sorted.map((record) => {
             const isSelected = anomalyRecordsMatch(record, selectedRecord);
             const severity = getAnomalySeverity(record.anomaly_score);
+            const scoreClass = metricValueClass(severity);
 
             return (
               <li key={`${record.ticker}-${record.date}`}>
@@ -61,23 +63,23 @@ export function TickerAnomalyPanel({
                   onClick={() => onSelect(record)}
                   className={`w-full rounded-xl border px-4 py-3 text-left transition ${
                     isSelected
-                      ? "border-cyan-500/40 bg-cyan-500/10"
-                      : "border-white/5 bg-zinc-900/40 hover:border-white/10 hover:bg-zinc-900/70"
+                      ? "row-selected border"
+                      : `${METRIC_CELL} hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(0,212,255,0.15)]`
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-100">
+                    <span className="text-sm font-medium text-[var(--text-primary)]">
                       {formatDate(String(record.date))}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-cyan-300">
+                      <span className={`text-xs ${scoreClass}`}>
                         {formatScore(record.anomaly_score)}
                       </span>
-                      <Badge className={severityStyles(severity)}>{severity}</Badge>
+                      <SeverityIndicator severity={severity} />
                     </div>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {primaryAnomalyType(record.anomaly_type).replace(/_/g, " ")} ·{" "}
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    {formatAnomalyTypeLabel(primaryAnomalyType(record.anomaly_type))} ·{" "}
                     {formatPercent(record.daily_return)} return
                   </p>
                 </button>

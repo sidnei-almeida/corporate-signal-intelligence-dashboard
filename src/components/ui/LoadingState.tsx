@@ -1,8 +1,13 @@
 export function LoadingState({ message = "Loading intelligence data…" }: { message?: string }) {
   return (
-    <div className="flex min-h-[50vh] w-full flex-col items-start justify-center gap-4 sm:items-center sm:text-center">
-      <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-cyan-400" />
-      <p className="text-sm text-slate-400">{message}</p>
+    <div className="empty-state min-h-[50vh] w-full">
+      <div
+        className="empty-state-icon"
+        aria-hidden
+      >
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--border-card)] border-t-[var(--text-secondary)]" />
+      </div>
+      <p className="empty-state-title">{message}</p>
     </div>
   );
 }

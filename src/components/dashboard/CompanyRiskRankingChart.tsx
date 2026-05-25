@@ -1,16 +1,17 @@
 "use client";
 
+import { useId } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import type { AnomalySummary } from "@/lib/types";
 import {
   formatAnomalyRate,
@@ -18,13 +19,17 @@ import {
   toFiniteNumber,
 } from "@/lib/formatters";
 import {
+  chartActiveBar,
+  chartBarGradientUrl,
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
+  chartGradientIds,
   chartGridStroke,
+  chartTickLineStroke,
   chartTooltipContentStyle,
   chartTooltipCursor,
-  chartTooltipItemStyle,
+  chartTooltipItemStyleAccent,
   chartTooltipLabelStyle,
 } from "@/lib/chartTheme";
 
@@ -55,6 +60,9 @@ export function CompanyRiskRankingChart({
     });
 
   const barCount = Math.max(data.length, 1);
+  const instanceId = useId();
+  const gradients = chartGradientIds(instanceId);
+  const barGradientFill = chartBarGradientUrl(gradients.bar);
 
   return (
     <Card
@@ -63,9 +71,9 @@ export function CompanyRiskRankingChart({
       className="w-full"
     >
       {data.length === 0 ? (
-        <p className="text-sm text-slate-500">No company summary data available.</p>
+        <p className="text-sm text-[var(--text-muted)]">No company summary data available.</p>
       ) : (
-        <div className="h-[280px] w-full md:h-[320px] 2xl:h-[360px]">
+        <div className="chart-embedded h-[280px] w-full md:h-[320px] 2xl:h-[360px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
@@ -73,6 +81,7 @@ export function CompanyRiskRankingChart({
               margin={{ top: 8, right: 48, left: 4, bottom: 8 }}
               barCategoryGap={barCount > 8 ? "14%" : "22%"}
             >
+              <ChartRechartsDefs barGradientId={gradients.bar} />
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke={chartGridStroke}
@@ -83,7 +92,7 @@ export function CompanyRiskRankingChart({
                 tickFormatter={(v) => `${(Number(v) * 100).toFixed(1)}%`}
                 tick={chartAxisTick}
                 axisLine={chartAxisLine}
-                tickLine={{ stroke: "rgba(255,255,255,0.12)" }}
+                tickLine={{ stroke: chartTickLineStroke }}
               />
               <YAxis
                 type="category"
@@ -97,7 +106,7 @@ export function CompanyRiskRankingChart({
                 cursor={chartTooltipCursor}
                 contentStyle={chartTooltipContentStyle}
                 labelStyle={chartTooltipLabelStyle}
-                itemStyle={chartTooltipItemStyle}
+                itemStyle={chartTooltipItemStyleAccent}
                 formatter={(value, _name, item) => {
                   const payload = item?.payload as {
                     rateLabel?: string;
@@ -109,15 +118,13 @@ export function CompanyRiskRankingChart({
                   ];
                 }}
               />
-              <Bar dataKey="rate" radius={[0, 4, 4, 0]} maxBarSize={28}>
-                {data.map((entry) => (
-                  <Cell
-                    key={entry.ticker}
-                    fill="rgba(34, 211, 238, 0.55)"
-                    stroke="rgba(34, 211, 238, 0.25)"
-                  />
-                ))}
-              </Bar>
+              <Bar
+                dataKey="rate"
+                fill={barGradientFill}
+                radius={[0, 3, 3, 0]}
+                maxBarSize={28}
+                activeBar={chartActiveBar}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

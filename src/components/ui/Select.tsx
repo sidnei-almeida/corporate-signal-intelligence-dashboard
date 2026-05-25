@@ -1,23 +1,32 @@
-import type { SelectHTMLAttributes } from "react";
+import type { SelectHTMLAttributes, ReactNode } from "react";
+import { TYPE_LABEL } from "@/lib/typography";
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  children: ReactNode;
   label?: string;
+  className?: string;
 }
 
-export function Select({ label, className = "", children, ...props }: SelectProps) {
+export function Select({ children, label, className = "", id, ...props }: SelectProps) {
+  const selectId = id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+
   return (
-    <label className="flex flex-col gap-1.5">
-      {label && (
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+    <div className="flex flex-col gap-1">
+      {label ? (
+        <label
+          htmlFor={selectId}
+          className={TYPE_LABEL}
+        >
           {label}
-        </span>
-      )}
+        </label>
+      ) : null}
       <select
-        className={`rounded-lg border border-white/10 bg-zinc-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 ${className}`}
+        id={selectId}
+        className={`input-surface rounded-lg px-3 py-2 text-sm ${className}`}
         {...props}
       >
         {children}
       </select>
-    </label>
+    </div>
   );
 }

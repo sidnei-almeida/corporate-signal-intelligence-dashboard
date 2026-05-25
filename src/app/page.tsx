@@ -61,15 +61,15 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 text-xs text-slate-500">
-        <Link href="/anomalies" className="text-cyan-400 hover:text-cyan-300">
+      <div className="flex flex-wrap gap-3 text-xs text-[var(--text-muted)]">
+        <Link href="/anomalies" className="link-accent hover:text-value-accent">
           Investigate anomalies →
         </Link>
-        <Link href="/companies" className="text-cyan-400 hover:text-cyan-300">
+        <Link href="/companies" className="link-accent hover:text-value-accent">
           Company intelligence →
         </Link>
-        <Link href="/briefings" className="text-cyan-400 hover:text-cyan-300">
-          Generate briefing →
+        <Link href="/briefings" className="link-accent hover:text-value-accent">
+          Generate AI briefing →
         </Link>
       </div>
     </div>

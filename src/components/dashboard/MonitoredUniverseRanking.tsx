@@ -1,14 +1,15 @@
 import { Card } from "@/components/ui/Card";
+import { RiskTierIndicator } from "@/components/ui/RiskTierIndicator";
+import { CARD_DIVIDER } from "@/lib/cardVisuals";
+import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { AnomalySummary } from "@/lib/types";
 import {
   formatAnomalyRate,
   formatScore,
   formatTicker,
   getRiskTier,
-  riskTierStyles,
   toFiniteNumber,
 } from "@/lib/formatters";
-import { Badge } from "@/components/ui/Badge";
 
 interface MonitoredUniverseRankingProps {
   summaries: AnomalySummary[];
@@ -34,15 +35,15 @@ export function MonitoredUniverseRanking({
       <div className="-mx-4 overflow-x-auto px-4 sm:-mx-5 sm:px-5 2xl:-mx-6 2xl:px-6">
         <table className="w-full min-w-[720px] text-left text-xs 2xl:text-sm">
           <thead>
-            <tr className="border-b border-white/5 text-xs uppercase tracking-wider text-slate-500">
-              <th className="pb-2 pr-3 font-semibold">Rank</th>
-              <th className="pb-2 pr-3 font-semibold">Ticker</th>
-              <th className="pb-2 pr-3 font-semibold">Tier</th>
-              <th className="pb-2 pr-3 font-semibold">Rate</th>
-              <th className="pb-2 pr-3 font-semibold">Anomalies</th>
-              <th className="pb-2 pr-3 font-semibold">Min</th>
-              <th className="pb-2 pr-3 font-semibold">Avg</th>
-              <th className="pb-2 font-semibold">Max</th>
+            <tr className={`border-b ${CARD_DIVIDER}`}>
+              <th className="table-head-cell pb-2 pr-3 text-left">Rank</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Ticker</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Tier</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Rate</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Anomalies</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Min</th>
+              <th className="table-head-cell pb-2 pr-3 text-left">Avg</th>
+              <th className="table-head-cell pb-2 text-left">Max</th>
             </tr>
           </thead>
           <tbody>
@@ -55,26 +56,26 @@ export function MonitoredUniverseRanking({
               return (
                 <tr
                   key={row.ticker}
-                  className={`border-b border-white/5 text-slate-300 ${
-                    isHighlighted ? "bg-cyan-500/10" : ""
+                  className={`border-b text-[var(--text-secondary)] ${CARD_DIVIDER} ${
+                    isHighlighted ? "row-selected" : ""
                   }`}
                 >
-                  <td className="py-2 pr-3 tabular-nums text-slate-500">
+                  <td className="py-2 pr-3 font-data text-[var(--text-muted)]">
                     {index + 1}
                   </td>
-                  <td className="py-2 pr-3 font-medium text-slate-100">
+                  <td className="py-2 pr-3 font-data font-semibold text-[var(--text-primary)]">
                     {formatTicker(row.ticker)}
                   </td>
                   <td className="py-2 pr-3">
-                    <Badge className={riskTierStyles(tier)}>{tier}</Badge>
+                    <RiskTierIndicator tier={tier} />
                   </td>
-                  <td className="py-2 pr-3 text-cyan-300">
+                  <td className={`py-2 pr-3 ${TYPE_DATA_ACCENT}`}>
                     {formatAnomalyRate(row.anomaly_rate)}
                   </td>
-                  <td className="py-2 pr-3 tabular-nums">{row.anomalies}</td>
-                  <td className="py-2 pr-3 font-mono">{formatScore(row.min_score)}</td>
-                  <td className="py-2 pr-3 font-mono">{formatScore(row.avg_score)}</td>
-                  <td className="py-2 font-mono">{formatScore(row.max_score)}</td>
+                  <td className="py-2 pr-3 font-data">{row.anomalies}</td>
+                  <td className="py-2 pr-3 font-data">{formatScore(row.min_score)}</td>
+                  <td className="py-2 pr-3 font-data">{formatScore(row.avg_score)}</td>
+                  <td className="py-2 font-data">{formatScore(row.max_score)}</td>
                 </tr>
               );
             })}

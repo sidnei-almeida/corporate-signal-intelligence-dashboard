@@ -1,7 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
+import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
+import { metricValueClass } from "@/lib/cardVisuals";
 import type { AnomalyRecord } from "@/lib/types";
 import {
   anomalyRecordsMatch,
@@ -11,7 +13,6 @@ import {
   formatScore,
   formatTicker,
   getAnomalySeverity,
-  severityStyles,
   splitAnomalyTypes,
   toFiniteNumber,
 } from "@/lib/formatters";
@@ -50,17 +51,17 @@ export function TopCompanyEvents({
       className="w-full 2xl:min-h-[37.75rem]"
     >
       {loading && (
-        <p className="text-sm text-slate-500">Loading company events…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading company events…</p>
       )}
       {!loading && !ticker && (
-        <p className="text-sm text-slate-500">Select a company to view events.</p>
+        <p className="text-sm text-[var(--text-muted)]">Select a company to view events.</p>
       )}
       {!loading && ticker && sorted.length === 0 && (
-        <p className="text-sm text-slate-500">No anomaly events for this ticker.</p>
+        <p className="text-sm text-[var(--text-muted)]">No anomaly events for this ticker.</p>
       )}
       {!loading && sorted.length > 0 && (
         <div className="max-h-[min(420px,55vh)] overflow-y-auto 2xl:min-h-[29.75rem] 2xl:max-h-[29.75rem]">
-          <ul className="divide-y divide-white/5">
+          <ul className="divide-y divide-[var(--border-subtle)]">
             {sorted.map((record, index) => {
               const severity = getAnomalySeverity(record.anomaly_score);
               const isSelected = anomalyRecordsMatch(record, selectedRecord);
@@ -71,36 +72,27 @@ export function TopCompanyEvents({
                   <button
                     type="button"
                     onClick={() => onSelect(record)}
-                    className={`w-full px-1 py-3 text-left transition hover:bg-white/[0.02] ${
-                      isSelected ? "bg-cyan-500/10" : ""
+                    className={`w-full px-1 py-3 text-left table-row-hover ${
+                      isSelected ? "row-selected border-transparent" : ""
                     }`}
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-slate-100">
+                      <span className="text-sm font-medium text-[var(--text-primary)]">
                         {formatDate(String(record.date))}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-cyan-300 2xl:text-sm">
+                        <span className={`text-xs 2xl:text-sm ${metricValueClass(severity)}`}>
                           {formatScore(record.anomaly_score)}
                         </span>
-                        <Badge className={severityStyles(severity)}>
-                          {severity}
-                        </Badge>
+                        <SeverityIndicator severity={severity} />
                       </div>
                     </div>
                     {types.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {types.slice(0, 3).map((t) => (
-                          <Badge
-                            key={t}
-                            className="border-white/10 bg-zinc-900 text-xs text-slate-400 normal-case"
-                          >
-                            {t.replace(/_/g, " ")}
-                          </Badge>
-                        ))}
+                      <div className="mt-2">
+                        <AnomalyTypeTags types={types} maxItems={3} />
                       </div>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-500 2xl:text-sm">
+                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-[var(--text-muted)] 2xl:text-sm">
                       <span>Return {formatPercent(record.daily_return)}</span>
                       <span>Vol Z {formatNumber(record.volume_zscore_30d, 2)}</span>
                       <span>Filings {formatNumber(record.filing_count_30d, 0)}</span>

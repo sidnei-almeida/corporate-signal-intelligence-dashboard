@@ -1,6 +1,8 @@
 "use client";
 
+import { useId } from "react";
 import {
+  Area,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -12,6 +14,7 @@ import {
   ZAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import type { AnomalyRecord, AnomalySeverity } from "@/lib/types";
 import {
   anomalyRecordsMatch,
@@ -23,12 +26,20 @@ import {
   toFiniteNumber,
 } from "@/lib/formatters";
 import {
+  chartActiveDot,
   chartAxisLine,
   chartAxisTick,
+  chartGradientIds,
   chartGridStroke,
+  chartLineStroke,
+  chartPointHighlightFill,
+  chartPointHighlightStroke,
+  chartPointUnselectedStroke,
+  chartSeverityLegend,
+  chartTickLineStroke,
   chartTooltipContentStyle,
   chartTooltipCursor,
-  chartTooltipItemStyle,
+  chartTooltipItemStyleAccent,
   chartTooltipLabelStyle,
 } from "@/lib/chartTheme";
 
@@ -56,6 +67,9 @@ export function CompanyAnomalyTimeline({
   loading,
   fillHeight = false,
 }: CompanyAnomalyTimelineProps) {
+  const instanceId = useId();
+  const gradients = chartGradientIds(instanceId);
+
   const points: TimelinePoint[] = [...records]
     .filter((r) => r.is_anomaly !== false)
     .map((record) => {
@@ -79,14 +93,32 @@ export function CompanyAnomalyTimeline({
     const { cx = 0, cy = 0, payload } = props;
     if (!payload) return null;
     const selected = anomalyRecordsMatch(payload.record, selectedRecord);
+    if (!selected) {
+      return (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={3}
+          fill={severityChartFill(payload.severity)}
+          fillOpacity={0.85}
+          stroke={chartPointUnselectedStroke}
+          strokeWidth={0}
+          className="cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(payload.record);
+          }}
+        />
+      );
+    }
     return (
       <circle
         cx={cx}
         cy={cy}
-        r={selected ? 7 : 5}
-        fill={severityChartFill(payload.severity)}
-        stroke={selected ? "#22d3ee" : "rgba(15,23,42,0.9)"}
-        strokeWidth={selected ? 2 : 1}
+        r={4.5}
+        fill={chartPointHighlightFill}
+        stroke={chartPointHighlightStroke}
+        strokeWidth={1.5}
         className="cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
@@ -96,60 +128,65 @@ export function CompanyAnomalyTimeline({
     );
   };
 
+  const chartHeightClass = fillHeight
+    ? "min-h-[280px] md:min-h-[320px] 2xl:min-h-[360px]"
+    : "h-[280px] md:h-[320px] 2xl:h-[360px]";
+
   return (
     <Card
       title={`${formatTicker(ticker) || "—"} Anomaly Timeline`}
-      subtitle="Anomaly score over time · click a point to select for briefing · lower = higher risk"
+      subtitle="Anomaly score over time · click a point to select for AI briefing · lower = higher risk"
       fillHeight={fillHeight}
       className={fillHeight ? "h-full w-full" : "w-full"}
     >
       {loading && (
-        <p className="text-sm text-slate-500">Loading anomaly history…</p>
+        <p className="text-sm text-[var(--text-muted)]">Loading anomaly history…</p>
       )}
       {!loading && !ticker && (
-        <p className="text-sm text-slate-500">Select a company to view its anomaly timeline.</p>
+        <p className="text-sm text-[var(--text-muted)]">Select a company to view its anomaly timeline.</p>
       )}
       {!loading && ticker && points.length === 0 && (
-        <p className="text-sm text-slate-500">No anomaly events for this ticker.</p>
+        <p className="text-sm text-[var(--text-muted)]">No anomaly events for this ticker.</p>
       )}
       {!loading && points.length > 0 && (
         <div className={fillHeight ? "flex min-h-0 flex-1 flex-col" : ""}>
-          <div
-            className={`w-full flex-1 ${
-              fillHeight
-                ? "min-h-[280px] md:min-h-[320px] 2xl:min-h-[360px]"
-                : "h-[280px] md:h-[320px] 2xl:h-[360px]"
-            }`}
-          >
+          <div className={`chart-embedded w-full flex-1 ${chartHeightClass}`}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart
                 data={points}
-                margin={{ top: 12, right: 16, left: 0, bottom: 8 }}
+                margin={{ top: 8, right: 12, left: 0, bottom: 4 }}
               >
+                <ChartRechartsDefs
+                  barGradientId={gradients.bar}
+                  areaGradientId={gradients.area}
+                  includeArea
+                />
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke={chartGridStroke}
+                  vertical={false}
                 />
                 <XAxis
                   dataKey="date"
                   tick={{ ...chartAxisTick, fontSize: 10 }}
                   axisLine={chartAxisLine}
-                  tickLine={{ stroke: "rgba(255,255,255,0.12)" }}
+                  tickLine={{ stroke: chartTickLineStroke }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   dataKey="score"
                   tick={chartAxisTick}
                   axisLine={chartAxisLine}
-                  tickLine={{ stroke: "rgba(255,255,255,0.12)" }}
+                  tickLine={{ stroke: chartTickLineStroke }}
                   tickFormatter={(v) => Number(v).toFixed(3)}
+                  width={48}
                 />
-                <ZAxis range={[60, 60]} />
+                <ZAxis range={[40, 40]} />
                 <Tooltip
                   cursor={chartTooltipCursor}
                   contentStyle={chartTooltipContentStyle}
                   labelStyle={chartTooltipLabelStyle}
-                  itemStyle={chartTooltipItemStyle}
+                  itemStyle={chartTooltipItemStyleAccent}
                   formatter={(value, _name, item) => {
                     const payload = item?.payload as TimelinePoint | undefined;
                     if (!payload) return [value, "Score"];
@@ -159,38 +196,51 @@ export function CompanyAnomalyTimeline({
                     ];
                   }}
                 />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  fill={`url(#${gradients.area})`}
+                  stroke="none"
+                  isAnimationActive={false}
+                />
                 <Line
                   type="monotone"
                   dataKey="score"
-                  stroke="rgba(34, 211, 238, 0.3)"
-                  strokeWidth={1.5}
+                  stroke={chartLineStroke}
+                  strokeWidth={1.75}
                   dot={false}
+                  activeDot={chartActiveDot}
                   isAnimationActive={false}
                 />
                 <Scatter
                   dataKey="score"
                   shape={renderDot}
                   onClick={(state) => {
-                    const payload = (state as { payload?: TimelinePoint })?.payload;
+                    const payload = (state as { payload?: TimelinePoint })
+                      ?.payload;
                     if (payload?.record) onSelect(payload.record);
                   }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-3 flex shrink-0 flex-wrap gap-3 text-[10px] text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-rose-400/90" /> Critical
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber-400/85" /> High
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-cyan-400/75" /> Medium
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-slate-500/70" /> Low
-            </span>
+          <div className="mt-3 flex shrink-0 flex-wrap gap-3 text-[10px] text-[var(--text-muted)]">
+            {(
+              [
+                ["Critical", chartSeverityLegend.Critical],
+                ["High", chartSeverityLegend.High],
+                ["Medium", chartSeverityLegend.Medium],
+                ["Low", chartSeverityLegend.Low],
+              ] as const
+            ).map(([label, color]) => (
+              <span key={label} className="flex items-center gap-1.5">
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: color }}
+                />{" "}
+                {label}
+              </span>
+            ))}
           </div>
         </div>
       )}

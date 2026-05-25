@@ -43,7 +43,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch {
     throw new ApiError(
-      "Unable to reach the Corporate Signal Intelligence API. Check your connection or try again after the Render instance wakes up.",
+      "Unable to reach the Corporate Anomaly Monitor API. Check your connection or try again after the Render instance wakes up.",
       0,
       path,
     );

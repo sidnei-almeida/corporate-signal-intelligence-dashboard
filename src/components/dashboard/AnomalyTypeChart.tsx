@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import {
   ANOMALY_TYPE_CHART_LABELS,
   ANOMALY_TYPE_LABELS,
@@ -17,13 +18,17 @@ import {
 } from "@/lib/constants";
 import type { AnomalyTypeCount } from "@/lib/types";
 import {
+  chartActiveBar,
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
+  CHART_BAR_GRADIENT_SUFFIX,
+  chartBarGradientUrl,
   chartGridStroke,
+  chartTickLineStroke,
   chartTooltipContentStyle,
   chartTooltipCursor,
-  chartTooltipItemStyle,
+  chartTooltipItemStyleAccent,
   chartTooltipLabelStyle,
 } from "@/lib/chartTheme";
 
@@ -63,8 +68,9 @@ export function AnomalyTypeChart({
       count: t.count,
     }));
 
-  const data = [...chartData, ...extras];
+  const data = [...chartData, ...extras].sort((a, b) => b.count - a.count);
   const barCount = Math.max(data.length, 4);
+  const barGradientFill = chartBarGradientUrl(CHART_BAR_GRADIENT_SUFFIX);
 
   return (
     <Card
@@ -74,7 +80,7 @@ export function AnomalyTypeChart({
       className={fillHeight ? "h-full w-full" : "w-full"}
     >
       <div
-        className={`w-full ${
+        className={`chart-embedded w-full ${
           fillHeight
             ? "h-[280px] md:h-[320px] 2xl:h-[360px]"
             : "h-[280px] md:h-[320px] 2xl:h-[360px]"
@@ -87,6 +93,7 @@ export function AnomalyTypeChart({
             margin={{ top: 12, right: 24, left: 4, bottom: 12 }}
             barCategoryGap={barCount > 6 ? "18%" : "24%"}
           >
+            <ChartRechartsDefs barGradientId={CHART_BAR_GRADIENT_SUFFIX} />
             <CartesianGrid
               strokeDasharray="3 3"
               stroke={chartGridStroke}
@@ -96,7 +103,7 @@ export function AnomalyTypeChart({
               type="number"
               tick={chartAxisTick}
               axisLine={chartAxisLine}
-              tickLine={{ stroke: "rgba(255,255,255,0.12)" }}
+              tickLine={{ stroke: chartTickLineStroke }}
             />
             <YAxis
               type="category"
@@ -111,13 +118,14 @@ export function AnomalyTypeChart({
               cursor={chartTooltipCursor}
               contentStyle={chartTooltipContentStyle}
               labelStyle={chartTooltipLabelStyle}
-              itemStyle={chartTooltipItemStyle}
+              itemStyle={chartTooltipItemStyleAccent}
             />
             <Bar
               dataKey="count"
-              fill="rgba(34, 211, 238, 0.55)"
-              radius={[0, 4, 4, 0]}
+              fill={barGradientFill}
+              radius={[0, 3, 3, 0]}
               maxBarSize={36}
+              activeBar={chartActiveBar}
             />
           </BarChart>
         </ResponsiveContainer>

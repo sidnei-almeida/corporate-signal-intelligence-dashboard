@@ -11,11 +11,11 @@ interface AppShellProps {
 
 export function AppShell({ children, health, modelInfo }: AppShellProps) {
   return (
-    <div className="min-h-screen w-full bg-[#05070A] text-slate-100">
+    <div className="app-shell app-enter relative min-h-screen w-full text-[var(--text-primary)]">
       <Sidebar />
-      <div className="flex min-h-screen w-full max-w-none flex-col lg:pl-64">
+      <div className="relative z-10 flex min-h-screen w-full max-w-none flex-col lg:pl-[232px]">
         <Header health={health} modelInfo={modelInfo} />
-        <main className="w-full max-w-none flex-1 px-4 py-6 sm:px-6 lg:px-8 2xl:px-10">
+        <main className="dashboard-workspace w-full max-w-none flex-1 px-4 py-6 sm:px-6 lg:px-8 2xl:px-10">
           {children}
         </main>
       </div>

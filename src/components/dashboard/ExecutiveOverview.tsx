@@ -1,16 +1,19 @@
+import type { DashboardIconComponent } from "@/components/icons";
 import {
-  AlertTriangle,
-  Building2,
-  Percent,
-  TrendingDown,
-  type LucideIcon,
-} from "lucide-react";
+  IconKpiAnomalies,
+  IconKpiModel,
+  IconKpiRate,
+  IconKpiRisk,
+  IconKpiUniverse,
+} from "@/components/icons";
 import type { AnomalySummary, Company, HealthResponse } from "@/lib/types";
 import {
   formatAnomalyRate,
   formatTicker,
   toFiniteNumber,
 } from "@/lib/formatters";
+import { CARD_SHELL } from "@/lib/cardVisuals";
+import { TYPE_LABEL, TYPE_METRIC } from "@/lib/typography";
 
 interface ExecutiveOverviewProps {
   companies: Company[];
@@ -27,21 +30,19 @@ function KpiCard({
   label: string;
   value: string;
   hint?: string;
-  icon: LucideIcon;
+  icon: DashboardIconComponent;
 }) {
   return (
-    <div className="h-full rounded-2xl border border-white/10 bg-zinc-950/90 p-4 sm:p-5 2xl:p-6">
+    <div className={`kpi-card ${CARD_SHELL} h-full p-4 sm:p-5 2xl:p-6`}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 2xl:text-xs">
-          {label}
-        </p>
-        <Icon className="h-4 w-4 shrink-0 text-cyan-500/60 2xl:h-5 2xl:w-5" />
+        <p className={TYPE_LABEL}>{label}</p>
+        <Icon className="shrink-0 text-accent opacity-60" size={18} />
       </div>
-      <p className="mt-3 text-2xl font-semibold tabular-nums text-slate-50 2xl:text-3xl">
-        {value}
-      </p>
+      <p className={`${TYPE_METRIC} mt-3`}>{value}</p>
       {hint && (
-        <p className="mt-1 text-xs text-slate-500 2xl:text-sm">{hint}</p>
+        <p className="mt-1 font-display text-[11px] font-normal text-[var(--text-secondary)] 2xl:text-xs">
+          {hint}
+        </p>
       )}
     </div>
   );
@@ -74,19 +75,19 @@ export function ExecutiveOverview({
         label="Monitored Companies"
         value={String(monitored)}
         hint="Public issuers in watchlist"
-        icon={Building2}
+        icon={IconKpiUniverse}
       />
       <KpiCard
         label="Total Anomalies"
         value={totalAnomalies.toLocaleString()}
         hint="Flagged issuer-period events"
-        icon={AlertTriangle}
+        icon={IconKpiAnomalies}
       />
       <KpiCard
         label="Avg Anomaly Rate"
         value={formatAnomalyRate(avgRate)}
         hint="Across monitored universe"
-        icon={Percent}
+        icon={IconKpiRate}
       />
       <KpiCard
         label="Highest Risk Ticker"
@@ -96,13 +97,13 @@ export function ExecutiveOverview({
             ? `${formatAnomalyRate(highestRisk.anomaly_rate)} anomaly rate`
             : undefined
         }
-        icon={TrendingDown}
+        icon={IconKpiRisk}
       />
       <KpiCard
         label="Model Availability"
         value={health?.model_available ? "Online" : "Offline"}
         hint={health?.data_source ? `Data: ${health.data_source}` : undefined}
-        icon={AlertTriangle}
+        icon={IconKpiModel}
       />
     </section>
   );

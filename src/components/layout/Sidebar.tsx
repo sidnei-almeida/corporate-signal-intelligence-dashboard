@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Building2, FileText, Radar } from "lucide-react";
-import { APP_NAME, DASHBOARD_NAV } from "@/lib/constants";
+import { ProductMark } from "@/components/brand";
+import { NAV_ICON_BY_HREF } from "@/components/icons";
+import {
+  APP_NAME,
+  DASHBOARD_NAV,
+  SIDEBAR_FOOTER_SOURCES,
+  SIDEBAR_FOOTER_STACK,
+} from "@/lib/constants";
 
-const navIcons = [Radar, BarChart3, Building2, FileText] as const;
+export const SIDEBAR_WIDTH_PX = 232;
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -16,39 +22,57 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 shrink-0 border-r border-white/5 bg-zinc-950/95 backdrop-blur-sm lg:flex lg:flex-col">
-      <div className="flex h-full flex-col px-4 py-6">
-        <div className="mb-8 px-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-            Navigation
-          </p>
-          <p className="mt-1 text-xs text-slate-400">{APP_NAME}</p>
-        </div>
-        <nav className="flex flex-col gap-1">
-          {DASHBOARD_NAV.map(({ label, href }, index) => {
-            const Icon = navIcons[index] ?? Radar;
+    <aside
+      className="fixed inset-y-0 left-0 z-30 hidden shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)] backdrop-blur-[20px] lg:flex"
+      style={{ width: SIDEBAR_WIDTH_PX }}
+    >
+      <div className="flex h-full flex-col px-3 py-5">
+        <header className="mb-7 border-b border-[var(--border-card)] px-1 pb-5">
+          <div className="flex items-center gap-2.5">
+            <ProductMark size={24} className="shrink-0 text-[var(--accent-primary)]" />
+            <p className="text-sm font-semibold leading-snug tracking-tight text-[var(--text-primary)]">
+              {APP_NAME}
+            </p>
+          </div>
+        </header>
+
+        <nav className="flex flex-col gap-1" aria-label="Main navigation">
+          {DASHBOARD_NAV.map(({ label, href }) => {
+            const Icon = NAV_ICON_BY_HREF[href];
             const active = isActive(pathname, href);
+
             return (
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${
-                  active
-                    ? "border border-cyan-500/25 bg-cyan-500/10 text-cyan-100"
-                    : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
+                className={`group flex h-10 items-center gap-2.5 rounded-md px-3 text-[13px] font-medium transition-colors duration-150 ${
+                  active ? "nav-active" : "nav-inactive border border-transparent"
                 }`}
               >
-                <Icon
-                  className={`h-4 w-4 shrink-0 ${active ? "text-cyan-400" : "text-cyan-500/70"}`}
-                />
+                {Icon ? (
+                  <Icon
+                    size={15}
+                    className={`shrink-0 transition-colors ${
+                      active
+                        ? "text-[var(--accent-primary)]"
+                        : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
+                    }`}
+                  />
+                ) : null}
                 {label}
               </Link>
             );
           })}
         </nav>
-        <div className="mt-auto rounded-xl border border-white/5 bg-zinc-900/50 p-3 text-[11px] leading-relaxed text-slate-500">
-          Stooq · SEC EDGAR · Isolation Forest · Groq briefings
-        </div>
+
+        <footer className="mt-auto border-t border-[var(--border-card)] px-1 pt-4">
+          <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">
+            {SIDEBAR_FOOTER_SOURCES}
+          </p>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--text-secondary)]">
+            {SIDEBAR_FOOTER_STACK}
+          </p>
+        </footer>
       </div>
     </aside>
   );

@@ -1,23 +1,27 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono, Syne } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 import { APP_NAME } from "@/lib/constants";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} | Executive Dashboard`,
+  title: APP_NAME,
   description:
-    "AI-powered corporate anomaly monitoring, SEC filing signals, and Groq executive briefings.",
+    "Anomaly detection and AI briefings for public company monitoring — market signals, SEC filings, and corporate intelligence.",
 };
 
 export default function RootLayout({
@@ -28,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
+        className={`${syne.variable} ${jetbrainsMono.variable} min-h-screen antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

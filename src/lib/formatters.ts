@@ -1,4 +1,6 @@
 import type { AnomalyRecord, AnomalySeverity, AnomalySummary } from "./types";
+import { ANOMALY_TYPE_LABELS } from "./constants";
+import { chartSeverityFill } from "./chartTheme";
 
 export type RiskTier = "High" | "Elevated" | "Moderate" | "Low";
 
@@ -70,17 +72,18 @@ export function getAnomalySeverity(score: NumericInput): AnomalySeverity {
   return "Low";
 }
 
-export function severityStyles(severity: AnomalySeverity): string {
-  switch (severity) {
-    case "Critical":
-      return "bg-rose-500/15 text-rose-300 border-rose-500/30";
-    case "High":
-      return "bg-amber-500/15 text-amber-300 border-amber-500/30";
-    case "Medium":
-      return "bg-cyan-500/15 text-cyan-300 border-cyan-500/30";
-    default:
-      return "bg-slate-500/15 text-slate-400 border-white/10";
-  }
+export function formatAnomalyTypeLabel(type: string): string {
+  const key = type.trim().toLowerCase();
+  const raw = ANOMALY_TYPE_LABELS[key] ?? type.replace(/_/g, " ");
+  const words = raw.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return type;
+  return words
+    .map((word, index) =>
+      index === 0
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word.toLowerCase(),
+    )
+    .join(" ");
 }
 
 export function formatAnomalyRate(rate: NumericInput): string {
@@ -122,19 +125,6 @@ export function getRiskTier(rate: NumericInput): RiskTier {
   return "Low";
 }
 
-export function riskTierStyles(tier: RiskTier): string {
-  switch (tier) {
-    case "High":
-      return "border-rose-500/30 bg-rose-500/10 text-rose-300";
-    case "Elevated":
-      return "border-amber-500/30 bg-amber-500/10 text-amber-300";
-    case "Moderate":
-      return "border-cyan-500/30 bg-cyan-500/10 text-cyan-300";
-    default:
-      return "border-slate-500/30 bg-slate-500/10 text-slate-400";
-  }
-}
-
 export function getCompanyRiskRank(
   summaries: AnomalySummary[],
   ticker: string,
@@ -161,21 +151,12 @@ export function countAnomalyTypesByRecord(
   return Object.entries(counts)
     .map(([type, count]) => ({
       type,
-      label: type.replace(/_/g, " "),
+      label: formatAnomalyTypeLabel(type),
       count,
     }))
     .sort((a, b) => b.count - a.count);
 }
 
 export function severityChartFill(severity: AnomalySeverity): string {
-  switch (severity) {
-    case "Critical":
-      return "rgba(244, 63, 94, 0.9)";
-    case "High":
-      return "rgba(245, 158, 11, 0.85)";
-    case "Medium":
-      return "rgba(34, 211, 238, 0.75)";
-    default:
-      return "rgba(100, 116, 139, 0.7)";
-  }
+  return chartSeverityFill[severity] ?? chartSeverityFill.Low;
 }

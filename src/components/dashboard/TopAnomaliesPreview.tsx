@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { IconArrowRight } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
+import { CARD_DIVIDER, metricValueClass } from "@/lib/cardVisuals";
 import type { AnomalyRecord } from "@/lib/types";
 import {
+  formatAnomalyTypeLabel,
   formatDate,
   formatScore,
   formatTicker,
   getAnomalySeverity,
   primaryAnomalyType,
-  severityStyles,
   splitAnomalyTypes,
   toFiniteNumber,
 } from "@/lib/formatters";
@@ -22,9 +23,9 @@ interface TopAnomaliesPreviewProps {
 }
 
 const thClass =
-  "pb-3 pt-1 text-left text-xs font-semibold uppercase tracking-wider text-slate-500";
+  "table-head-cell pb-3 pt-1 text-left";
 const tdClass =
-  "py-2.5 pr-4 text-xs leading-normal text-slate-300 2xl:py-3 2xl:text-sm";
+  "py-2.5 pr-4 text-xs leading-normal text-[var(--text-secondary)] 2xl:py-3 2xl:text-sm";
 
 export function TopAnomaliesPreview({
   records,
@@ -45,23 +46,23 @@ export function TopAnomaliesPreview({
       action={
         <Link
           href="/anomalies"
-          className="flex items-center gap-1 text-xs font-medium text-cyan-400 transition hover:text-cyan-300 2xl:text-sm"
+          className="flex items-center gap-1 text-xs font-medium link-accent transition hover:text-[#00D4FF] 2xl:text-sm"
         >
           View all
-          <ArrowRight className="h-4 w-4" />
+          <IconArrowRight size={16} />
         </Link>
       }
       fillHeight
       className="h-full w-full"
     >
       {sorted.length === 0 ? (
-        <p className="text-sm text-slate-500">No anomaly events available.</p>
+        <p className="text-sm text-[var(--text-muted)]">No anomaly events available.</p>
       ) : (
         <div className="-mx-1 flex min-h-0 flex-1 flex-col px-1">
           <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
             <table className="w-full min-w-[640px] border-collapse text-left">
-              <thead className="sticky top-0 z-10 bg-zinc-950/95 backdrop-blur-sm">
-                <tr className="border-b border-white/5">
+              <thead className="sticky top-0 z-10 bg-[var(--bg-surface)] backdrop-blur-sm">
+                <tr className={`border-b ${CARD_DIVIDER}`}>
                   <th className={thClass}>Ticker</th>
                   <th className={thClass}>Date</th>
                   <th className={thClass}>Score</th>
@@ -77,21 +78,18 @@ export function TopAnomaliesPreview({
                   );
                   const typeLabel =
                     types.length > 0
-                      ? types[0].replace(/_/g, " ")
-                      : primaryAnomalyType(record.anomaly_type).replace(
-                          /_/g,
-                          " ",
-                        );
+                      ? formatAnomalyTypeLabel(types[0])
+                      : formatAnomalyTypeLabel(primaryAnomalyType(record.anomaly_type));
 
                   return (
                     <tr
                       key={`${record.ticker}-${record.date}-${index}`}
-                      className="border-b border-white/5 transition hover:bg-white/[0.02]"
+                      className={`border-b table-row-hover ${CARD_DIVIDER}`}
                     >
-                      <td className={`${tdClass} font-semibold text-slate-100`}>
+                      <td className={`${tdClass} font-data font-semibold text-[var(--text-primary)]`}>
                         <Link
                           href="/anomalies"
-                          className="block hover:text-cyan-200"
+                          className="block hover:text-[var(--accent-text)]"
                         >
                           {formatTicker(record.ticker)}
                         </Link>
@@ -101,22 +99,20 @@ export function TopAnomaliesPreview({
                           {formatDate(String(record.date))}
                         </Link>
                       </td>
-                      <td className={`${tdClass} font-mono text-cyan-300`}>
+                      <td className={`${tdClass} ${metricValueClass(severity)}`}>
                         <Link href="/anomalies" className="block">
                           {formatScore(record.anomaly_score)}
                         </Link>
                       </td>
                       <td className={tdClass}>
                         <Link href="/anomalies" className="block">
-                          <Badge className={severityStyles(severity)}>
-                            {severity}
-                          </Badge>
+                          <SeverityIndicator severity={severity} />
                         </Link>
                       </td>
                       <td className={tdClass}>
                         <Link
                           href="/anomalies"
-                          className="block max-w-[200px] truncate text-slate-400"
+                          className="block max-w-[200px] truncate text-[var(--text-secondary)]"
                           title={typeLabel}
                         >
                           {typeLabel}

@@ -1,6 +1,11 @@
 export const APP_NAME = "Corporate Signal Intelligence";
 export const APP_TAGLINE =
-  "AI-powered anomaly monitoring for public companies";
+  "Anomaly detection and AI briefings for public company monitoring.";
+export const APP_BOOT_FOOTER =
+  "This may take a few seconds while the backend wakes up.";
+
+export const SIDEBAR_FOOTER_SOURCES = "Stooq · SEC EDGAR";
+export const SIDEBAR_FOOTER_STACK = "Isolation Forest · AI Briefings";
 
 export const ANOMALY_TYPE_ORDER = [
   "revenue_shift",
@@ -40,7 +45,7 @@ export const DASHBOARD_NAV = [
   { label: "Overview", href: "/" },
   { label: "Anomalies", href: "/anomalies" },
   { label: "Companies", href: "/companies" },
-  { label: "Briefings", href: "/briefings" },
+  { label: "AI Briefings", href: "/briefings" },
 ] as const;
 
 export const ROUTE_META: Record<
@@ -49,21 +54,25 @@ export const ROUTE_META: Record<
 > = {
   "/": {
     title: "Overview",
-    subtitle: "Executive snapshot · system health · highest-risk signals",
+    subtitle:
+      "Executive snapshot · anomaly detection · AI briefing readiness",
   },
   "/anomalies": {
     title: "Anomaly Investigation",
-    subtitle: "Explore critical events · filter · inspect signal context",
+    subtitle:
+      "Explore abnormal events, inspect signal drivers, and prepare AI briefings.",
   },
   "/companies": {
     title: "Company Intelligence",
-    subtitle: "Issuer-level anomaly profile · timeline · event history",
+    subtitle:
+      "Issuer-level anomaly profile, event history, and signal breakdown.",
   },
   "/briefings": {
-    title: "Executive Briefings",
-    subtitle: "AI-generated narrative from selected anomaly context",
+    title: "AI Executive Briefings",
+    subtitle:
+      "Generate analyst-style narratives from selected anomaly context.",
   },
 };
 
 export const BRIEFING_DISCLAIMER =
-  "Generated briefing is for analytical monitoring only and is not financial advice.";
+  "AI-generated briefing is for analytical monitoring only and is not financial advice.";

@@ -5,11 +5,10 @@ interface BadgeProps {
   className?: string;
 }
 
+/** Minimal inline label wrapper for rare legacy uses */
 export function Badge({ children, className = "" }: BadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${className}`}
-    >
+    <span className={`inline-flex items-center ${className}`}>
       {children}
     </span>
   );

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { IconChevronDown } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
+import { CARD_DIVIDER, INLINE_TEXT_TAG } from "@/lib/cardVisuals";
+import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { AnomalySummary } from "@/lib/types";
 import {
   formatAnomalyRate,
@@ -37,17 +39,18 @@ export function AnomalySummaryTable({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-slate-400 transition hover:border-white/20 hover:text-slate-200"
+          className={`flex items-center gap-1 px-3 py-1.5 transition hover:border-[rgba(0,212,255,0.15)] hover:text-[var(--text-primary)] ${INLINE_TEXT_TAG}`}
         >
           {open ? "Collapse" : "Expand"}
-          <ChevronDown
-            className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`}
+          <IconChevronDown
+            size={14}
+            className={`transition ${open ? "rotate-180" : ""}`}
           />
         </button>
       }
     >
       {!open && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-[var(--text-muted)]">
           {sorted.length} companies tracked · use the risk ranking chart above for
           primary visual analysis.
         </p>
@@ -56,37 +59,37 @@ export function AnomalySummaryTable({
         <div className="-mx-4 overflow-x-auto px-4 sm:-mx-5 sm:px-5 2xl:-mx-6 2xl:px-6">
           <table className="w-full min-w-[640px] text-left text-xs 2xl:text-sm">
             <thead>
-              <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-slate-500">
-                <th className="pb-2 pr-3 font-semibold">Ticker</th>
-                <th className="pb-2 pr-3 font-semibold">Rows</th>
-                <th className="pb-2 pr-3 font-semibold">Anomalies</th>
-                <th className="pb-2 pr-3 font-semibold">Rate</th>
-                <th className="pb-2 pr-3 font-semibold">Min</th>
-                <th className="pb-2 pr-3 font-semibold">Avg</th>
-                <th className="pb-2 font-semibold">Max</th>
+              <tr className={`border-b ${CARD_DIVIDER}`}>
+                <th className="table-head-cell pb-2 pr-3 text-left">Ticker</th>
+                <th className="table-head-cell pb-2 pr-3 text-left">Rows</th>
+                <th className="table-head-cell pb-2 pr-3 text-left">Anomalies</th>
+                <th className="table-head-cell pb-2 pr-3 text-left">Rate</th>
+                <th className="table-head-cell pb-2 pr-3 text-left">Min</th>
+                <th className="table-head-cell pb-2 pr-3 text-left">Avg</th>
+                <th className="table-head-cell pb-2 text-left">Max</th>
               </tr>
             </thead>
             <tbody>
               {sorted.map((row) => (
                 <tr
                   key={row.ticker}
-                  className="border-b border-white/5 text-slate-300"
+                  className={`border-b text-[var(--text-secondary)] ${CARD_DIVIDER}`}
                 >
-                  <td className="py-2 pr-3 font-medium text-slate-100">
+                  <td className="py-2 pr-3 font-data font-semibold text-[var(--text-primary)]">
                     {formatTicker(row.ticker)}
                   </td>
-                  <td className="py-2 pr-3 tabular-nums">{row.rows.toLocaleString()}</td>
-                  <td className="py-2 pr-3 tabular-nums">{row.anomalies}</td>
-                  <td className="py-2 pr-3 text-cyan-300">
+                  <td className="py-2 pr-3 font-data">{row.rows.toLocaleString()}</td>
+                  <td className="py-2 pr-3 font-data">{row.anomalies}</td>
+                  <td className={`py-2 pr-3 ${TYPE_DATA_ACCENT}`}>
                     {formatAnomalyRate(row.anomaly_rate)}
                   </td>
-                  <td className="py-2 pr-3 font-mono text-[11px]">
+                  <td className="py-2 pr-3 font-data text-xs">
                     {formatScore(row.min_score)}
                   </td>
-                  <td className="py-2 pr-3 font-mono text-[11px]">
+                  <td className="py-2 pr-3 font-data text-xs">
                     {formatScore(row.avg_score)}
                   </td>
-                  <td className="py-2 font-mono text-[11px]">
+                  <td className="py-2 font-data text-xs">
                     {formatScore(row.max_score)}
                   </td>
                 </tr>

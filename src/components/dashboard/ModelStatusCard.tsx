@@ -1,6 +1,16 @@
-import { ArrowRight, CheckCircle2, Cpu } from "lucide-react";
+import { IconArrowRight, IconCheck, IconModelEngine } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { MetricCell } from "@/components/ui/MetricCell";
+import { StatusIndicator } from "@/components/ui/StatusIndicator";
+import {
+  CARD_DIVIDER,
+  METRIC_CELL,
+  PIPELINE_ARROW,
+  PIPELINE_STEP,
+  SECTION_LABEL,
+  SECTION_VALUE,
+} from "@/lib/cardVisuals";
+import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { HealthResponse, ModelInfo } from "@/lib/types";
 
 interface ModelStatusCardProps {
@@ -14,14 +24,14 @@ const PIPELINE_STEPS = [
   "SEC Filings",
   "Feature Engine",
   "ML Score",
-  "Briefing",
+  "AI Briefing",
 ] as const;
 
 const SIGNAL_STACK = [
   { label: "Market Data", value: "Stooq" },
   { label: "Corporate Filings", value: "SEC EDGAR" },
   { label: "Anomaly Model", value: "Isolation Forest" },
-  { label: "Briefing Layer", value: "Groq" },
+  { label: "AI Briefing Layer", value: "Groq" },
 ] as const;
 
 function formatDataSource(source?: string): string {
@@ -61,74 +71,60 @@ export function ModelStatusCard({
       >
         <div className="flex items-start gap-3">
           <div
-            className={`shrink-0 rounded-lg border p-2 ${
+            className={`shrink-0 rounded-md border p-2 ${METRIC_CELL} ${
               modelReady
-                ? "border-cyan-500/25 bg-cyan-500/10"
-                : "border-amber-500/25 bg-amber-500/10"
+                ? "row-selected border"
+                : "border-[var(--high-border)] bg-[var(--high-bg)]"
             }`}
           >
-            <Cpu
-              className={`h-4 w-4 ${modelReady ? "text-cyan-400" : "text-amber-400"}`}
+            <IconModelEngine
+              size={16}
+              className={modelReady ? "text-[#00D4FF]" : "text-[var(--high-text)]"}
             />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <CheckCircle2
-                className={`h-3.5 w-3.5 ${modelReady ? "text-emerald-400" : "text-amber-400"}`}
+              <IconCheck
+                size={14}
+                className={modelReady ? "text-[#00D4FF]" : "text-[var(--high-text)]"}
               />
-              <span className="text-sm font-medium text-slate-100">
+              <span className="text-sm font-medium text-[var(--text-primary)]">
                 {modelReady ? "Model operational" : "Model unavailable"}
               </span>
             </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              <Badge
-                className={
-                  modelReady
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                    : "border-amber-500/30 bg-amber-500/10 text-amber-300"
-                }
-              >
-                {modelReady ? "Artifact loaded" : "Artifact missing"}
-              </Badge>
-              <Badge className="border-white/10 bg-zinc-900 text-slate-400">
-                {dataSource} source
-              </Badge>
-              <Badge
-                className={
-                  apiOnline
-                    ? "border-cyan-500/25 bg-cyan-500/10 text-cyan-300"
-                    : "border-rose-500/25 bg-rose-500/10 text-rose-300"
-                }
-              >
-                API {apiOnline ? "Online" : "Degraded"}
-              </Badge>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <StatusIndicator
+                ok={modelReady}
+                label={modelReady ? "Artifact loaded" : "Artifact missing"}
+              />
+              <span className="text-xs text-[var(--text-muted)]">{dataSource} source</span>
+              <StatusIndicator
+                ok={apiOnline}
+                label={`API ${apiOnline ? "Online" : "Degraded"}`}
+              />
             </div>
           </div>
         </div>
 
         <dl className="grid grid-cols-2 gap-2">
-          <Metric label="Engine" value="Isolation Forest" />
-          <Metric label="Type" value={String(typeLabel)} />
-          <Metric label="Features" value={String(features)} mono />
-          <Metric label="Output" value="Score + Type" />
-          <Metric label="Briefing" value="Groq" />
-          <Metric label="Backend" value="FastAPI" />
-          <Metric label="Briefing model" value={briefingModel} />
-          <Metric label="Artifact" value={String(artifactLabel)} truncate />
+          <MetricCell label="Engine" value="Isolation Forest" />
+          <MetricCell label="Type" value={String(typeLabel)} />
+          <MetricCell label="Features" value={String(features)} mono />
+          <MetricCell label="Output" value="Score + Type" />
+          <MetricCell label="AI Briefing" value="Groq" />
+          <MetricCell label="Backend" value="FastAPI" />
+          <MetricCell label="AI model" value={briefingModel} />
+          <MetricCell label="Artifact" value={String(artifactLabel)} truncate />
         </dl>
 
         <div>
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            Pipeline flow
-          </p>
+          <p className={`mb-2 ${SECTION_LABEL}`}>Pipeline flow</p>
           <div className="flex flex-wrap items-center gap-1">
             {PIPELINE_STEPS.map((step, index) => (
               <span key={step} className="flex items-center gap-1">
-                <span className="rounded-md border border-white/10 bg-zinc-900/80 px-2 py-0.5 text-[10px] text-slate-300">
-                  {step}
-                </span>
+                <span className={PIPELINE_STEP}>{step}</span>
                 {index < PIPELINE_STEPS.length - 1 && (
-                  <ArrowRight className="h-3 w-3 shrink-0 text-slate-600" />
+                  <IconArrowRight size={12} className={PIPELINE_ARROW} />
                 )}
               </span>
             ))}
@@ -136,11 +132,9 @@ export function ModelStatusCard({
         </div>
 
         <div className={fillHeight ? "flex min-h-0 flex-1 flex-col" : ""}>
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            Signal stack
-          </p>
+          <p className={`mb-2 ${SECTION_LABEL}`}>Signal stack</p>
           <ul
-            className={`space-y-1.5 rounded-xl border border-white/5 bg-zinc-900/40 px-3 py-2.5 ${
+            className={`space-y-1.5 ${METRIC_CELL} px-3 py-2.5 ${
               fillHeight ? "flex-1" : ""
             }`}
           >
@@ -149,56 +143,32 @@ export function ModelStatusCard({
                 key={label}
                 className="flex items-center justify-between gap-3 text-xs"
               >
-                <span className="text-slate-500">{label}</span>
-                <span className="font-medium text-slate-200">{value}</span>
+                <span className={SECTION_LABEL}>{label}</span>
+                <span className={SECTION_VALUE}>{value}</span>
               </li>
             ))}
-            <li className="flex items-center justify-between gap-3 border-t border-white/5 pt-1.5 text-xs">
-              <span className="text-slate-500">Database</span>
-              <span className="font-medium text-cyan-300/90">{dataSource}</span>
+            <li
+              className={`flex items-center justify-between gap-3 border-t pt-1.5 text-xs ${CARD_DIVIDER}`}
+            >
+              <span className={SECTION_LABEL}>Database</span>
+              <span className={TYPE_DATA_ACCENT}>{dataSource}</span>
             </li>
             <li className="flex items-center justify-between gap-3 text-xs">
-              <span className="text-slate-500">Deployment</span>
-              <span className="font-medium text-slate-200">Render · FastAPI</span>
+              <span className={SECTION_LABEL}>Deployment</span>
+              <span className={SECTION_VALUE}>Render · FastAPI</span>
             </li>
           </ul>
         </div>
 
         <p
-          className={`text-[11px] leading-relaxed text-slate-600 ${
+          className={`text-[11px] leading-relaxed text-[var(--text-muted)] ${
             fillHeight ? "mt-auto shrink-0" : ""
           }`}
         >
           Pipeline transforms market, filing, and financial signals into anomaly
-          scores and executive context.
+          scores and AI briefing context.
         </p>
       </div>
     </Card>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  mono,
-  truncate,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-  truncate?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-white/5 bg-zinc-900/50 px-2.5 py-2">
-      <dt className="text-[10px] uppercase tracking-wider text-slate-500">
-        {label}
-      </dt>
-      <dd
-        className={`mt-0.5 text-xs text-slate-200 ${mono ? "font-mono tabular-nums" : ""} ${truncate ? "truncate" : ""}`}
-        title={truncate ? value : undefined}
-      >
-        {value}
-      </dd>
-    </div>
   );
 }

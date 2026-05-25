@@ -104,7 +104,7 @@ export default function BriefingsPage() {
       const message =
         err instanceof ApiError
           ? err.message
-          : "Briefing generation failed. Ensure GROQ_API_KEY is configured on the API.";
+          : "AI briefing generation failed. Ensure GROQ_API_KEY is configured on the API.";
       setBriefingError(message);
       setBriefing(null);
     } finally {
@@ -113,7 +113,7 @@ export default function BriefingsPage() {
   };
 
   if (loading) {
-    return <LoadingState message="Loading briefing workspace…" />;
+    return <LoadingState message="Loading AI briefing workspace…" />;
   }
 
   if (error) {
