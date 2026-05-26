@@ -7,10 +7,19 @@ import { ExecutiveMemo } from "@/components/dashboard/ExecutiveMemo";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useBriefingsPageData } from "@/hooks/useBriefingsPageData";
-import { ApiError, generateBriefing } from "@/lib/api";
+import { ApiError, generateBriefingFromRecord } from "@/lib/api";
 import { filterAnomalyRecords } from "@/lib/anomalyFilters";
+import { normalizeBriefingMarkdown } from "@/lib/briefingNormalize";
 import type { AnomalyRecord, BriefingResponse } from "@/lib/types";
-import { anomalyRecordsMatch, toFiniteNumber } from "@/lib/formatters";
+import {
+  anomalyRecordsMatch,
+  formatAnomalyTypeLabel,
+  formatScore,
+  formatTicker,
+  getAnomalySeverity,
+  splitAnomalyTypes,
+  toFiniteNumber,
+} from "@/lib/formatters";
 
 function sortByScore(records: AnomalyRecord[]): AnomalyRecord[] {
   return [...records]
@@ -93,12 +102,24 @@ export default function BriefingsPage() {
     setBriefingLoading(true);
     setBriefingError(null);
     try {
-      const dateStr = String(activeAnomaly.date).slice(0, 10);
-      const result = await generateBriefing(
-        String(activeAnomaly.ticker),
-        dateStr,
+      const company = companies.find(
+        (c) => formatTicker(c.ticker) === formatTicker(activeAnomaly.ticker),
       );
-      setBriefing(result);
+      const result = await generateBriefingFromRecord(activeAnomaly, company);
+      const severity = getAnomalySeverity(activeAnomaly.anomaly_score);
+      const typeLabels = splitAnomalyTypes(
+        String(activeAnomaly.anomaly_type ?? ""),
+      ).map(formatAnomalyTypeLabel);
+
+      setBriefing({
+        ...result,
+        briefing: normalizeBriefingMarkdown(
+          result.briefing,
+          severity,
+          typeLabels,
+          formatScore(activeAnomaly.anomaly_score),
+        ),
+      });
       setBriefingGeneratedAt(new Date());
     } catch (err) {
       const message =

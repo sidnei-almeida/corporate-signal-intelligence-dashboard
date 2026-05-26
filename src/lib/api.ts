@@ -1,13 +1,19 @@
 import type {
   AnomalyListResponse,
+  AnomalyRecord,
   AnomalySummary,
   AnomalyTypeCount,
+  BriefingFromRecordRequest,
   BriefingResponse,
   Company,
   CompanyProfile,
   HealthResponse,
   ModelInfo,
 } from "./types";
+import {
+  buildBriefingCompanyContext,
+  buildBriefingRecordPayload,
+} from "@/lib/briefingPayload";
 
 /** Same-origin proxy in dev/production — avoids browser CORS to Render. */
 const API_BASE_URL = "/api-backend";
@@ -99,6 +105,7 @@ export function getModelInfo(): Promise<ModelInfo> {
   return apiFetch<ModelInfo>("/model/info");
 }
 
+/** @deprecated Prefer generateBriefingFromRecord — sends severity + anomaly types */
 export function generateBriefing(
   ticker: string,
   date: string,
@@ -109,6 +116,22 @@ export function generateBriefing(
       ticker: ticker.trim().toUpperCase(),
       date: date.slice(0, 10),
     }),
+  });
+}
+
+/** Sends full anomaly context so the model receives severity and signal types */
+export function generateBriefingFromRecord(
+  record: AnomalyRecord,
+  company?: Company | null,
+): Promise<BriefingResponse> {
+  const payload: BriefingFromRecordRequest = {
+    record: buildBriefingRecordPayload(record),
+    company_context: buildBriefingCompanyContext(record, company),
+  };
+
+  return apiFetch<BriefingResponse>("/briefings/generate-from-record", {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
 }
 

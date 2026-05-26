@@ -85,6 +85,11 @@ export interface BriefingRequest {
   date: string;
 }
 
+export interface BriefingFromRecordRequest {
+  record: Record<string, unknown>;
+  company_context?: Record<string, unknown> | null;
+}
+
 export interface BriefingResponse {
   briefing: string;
   model_used?: string;
