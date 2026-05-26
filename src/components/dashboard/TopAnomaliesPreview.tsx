@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { IconArrowRight } from "@/components/icons";
+import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { CARD_DIVIDER, metricValueClass } from "@/lib/cardVisuals";
@@ -10,7 +11,6 @@ import {
   formatAnomalyTypeLabel,
   formatDate,
   formatScore,
-  formatTicker,
   getAnomalySeverity,
   primaryAnomalyType,
   splitAnomalyTypes,
@@ -46,7 +46,7 @@ export function TopAnomaliesPreview({
       action={
         <Link
           href="/anomalies"
-          className="flex items-center gap-1 text-xs font-medium link-accent transition hover:text-[#00D4FF] 2xl:text-sm"
+          className="flex items-center gap-1 text-xs font-medium link-accent transition hover:text-[var(--accent-primary)] 2xl:text-sm"
         >
           View all
           <IconArrowRight size={16} />
@@ -61,7 +61,7 @@ export function TopAnomaliesPreview({
         <div className="-mx-1 flex min-h-0 flex-1 flex-col px-1">
           <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
             <table className="w-full min-w-[640px] border-collapse text-left">
-              <thead className="sticky top-0 z-10 bg-[var(--bg-surface)] backdrop-blur-sm">
+              <thead className="sticky top-0 z-10 bg-[var(--bg-surface)]">
                 <tr className={`border-b ${CARD_DIVIDER}`}>
                   <th className={thClass}>Ticker</th>
                   <th className={thClass}>Date</th>
@@ -86,12 +86,12 @@ export function TopAnomaliesPreview({
                       key={`${record.ticker}-${record.date}-${index}`}
                       className={`border-b table-row-hover ${CARD_DIVIDER}`}
                     >
-                      <td className={`${tdClass} font-data font-semibold text-[var(--text-primary)]`}>
+                      <td className={tdClass}>
                         <Link
                           href="/anomalies"
-                          className="block hover:text-[var(--accent-text)]"
+                          className="block hover:opacity-90"
                         >
-                          {formatTicker(record.ticker)}
+                          <CompanyTickerCell ticker={String(record.ticker)} />
                         </Link>
                       </td>
                       <td className={tdClass}>
@@ -106,7 +106,7 @@ export function TopAnomaliesPreview({
                       </td>
                       <td className={tdClass}>
                         <Link href="/anomalies" className="block">
-                          <SeverityIndicator severity={severity} />
+                          <SeverityIndicator severity={severity} compact />
                         </Link>
                       </td>
                       <td className={tdClass}>

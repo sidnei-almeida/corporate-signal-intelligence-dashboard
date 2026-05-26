@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
@@ -10,7 +11,7 @@ import {
   INLINE_TEXT_TAG,
   metricValueClass,
 } from "@/lib/cardVisuals";
-import { TYPE_LABEL, TYPE_TICKER } from "@/lib/typography";
+import { TYPE_LABEL } from "@/lib/typography";
 import type { AnomalyRecord, AnomalySeverity, Company } from "@/lib/types";
 import {
   anomalyRecordsMatch,
@@ -150,9 +151,7 @@ export function AnomalyEventSelector({
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <span className={`${TYPE_TICKER} font-semibold`}>
-                          {formatTicker(record.ticker)}
-                        </span>
+                        <CompanyTickerCell ticker={String(record.ticker)} />
                         <p className="mt-0.5 text-xs text-[var(--text-muted)]">
                           {formatDate(String(record.date))}
                         </p>
@@ -161,7 +160,7 @@ export function AnomalyEventSelector({
                         <span className={`text-xs ${scoreClass}`}>
                           {formatScore(record.anomaly_score)}
                         </span>
-                        <SeverityIndicator severity={severity} />
+                        <SeverityIndicator severity={severity} compact />
                       </div>
                     </div>
                     {types.length > 0 && (
@@ -183,7 +182,7 @@ export function AnomalyEventSelector({
         <div className={`border-t pt-3 ${CARD_DIVIDER}`}>
           <Link
             href="/anomalies"
-            className="text-xs font-medium link-accent hover:text-[#00D4FF]"
+            className="text-xs font-medium link-accent hover:text-[var(--accent-primary)]"
           >
             View all events →
           </Link>

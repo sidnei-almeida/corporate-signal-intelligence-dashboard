@@ -1,10 +1,11 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -12,7 +13,6 @@ import {
 } from "recharts";
 import { Card } from "@/components/ui/Card";
 import { MetricCell } from "@/components/ui/MetricCell";
-import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import { ANOMALY_TYPE_LABELS } from "@/lib/constants";
 import { CARD_DIVIDER, INLINE_TEXT_TAG, SECTION_LABEL } from "@/lib/cardVisuals";
 import { TYPE_DATA_ACCENT } from "@/lib/typography";
@@ -29,8 +29,8 @@ import {
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
-  chartBarGradientUrl,
-  chartGradientIds,
+  chartBarCellFill,
+  chartBarStroke,
   chartGridStroke,
   chartTooltipContentStyle,
   chartTooltipCursor,
@@ -104,10 +104,6 @@ export function CompanySignalBreakdown({
 
   const chartMinHeight = Math.max(200, chartData.length * 36);
   const hasSignals = Boolean(ticker) && chartData.length > 0;
-  const instanceId = useId();
-  const gradients = chartGradientIds(instanceId);
-  const barGradientFill = chartBarGradientUrl(gradients.bar);
-
   const body = (
     <>
       {loading && (
@@ -178,7 +174,6 @@ export function CompanySignalBreakdown({
                     axisLine={chartAxisLine}
                     tickLine={false}
                   />
-                  <ChartRechartsDefs barGradientId={gradients.bar} />
                   <Tooltip
                     cursor={chartTooltipCursor}
                     contentStyle={chartTooltipContentStyle}
@@ -187,11 +182,18 @@ export function CompanySignalBreakdown({
                   />
                   <Bar
                     dataKey="count"
-                    fill={barGradientFill}
                     radius={[0, 3, 3, 0]}
                     maxBarSize={22}
                     activeBar={chartActiveBar}
-                  />
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={entry.type}
+                        fill={chartBarCellFill(index)}
+                        stroke={chartBarStroke}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

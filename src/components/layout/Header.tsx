@@ -27,7 +27,7 @@ export function Header({ health, modelInfo }: HeaderProps) {
   const modelOk = modelInfo?.model_exists ?? health?.model_available;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[rgba(5,5,7,0.88)] backdrop-blur-[20px]">
+    <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]">
       <div className="flex w-full max-w-none flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8 2xl:px-10 2xl:py-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">

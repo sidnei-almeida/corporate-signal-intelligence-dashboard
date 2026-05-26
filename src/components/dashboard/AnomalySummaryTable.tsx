@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { IconChevronDown } from "@/components/icons";
+import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { CARD_DIVIDER, INLINE_TEXT_TAG } from "@/lib/cardVisuals";
 import { TYPE_DATA_ACCENT } from "@/lib/typography";
@@ -9,7 +10,6 @@ import type { AnomalySummary } from "@/lib/types";
 import {
   formatAnomalyRate,
   formatScore,
-  formatTicker,
   toFiniteNumber,
 } from "@/lib/formatters";
 
@@ -39,7 +39,7 @@ export function AnomalySummaryTable({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className={`flex items-center gap-1 px-3 py-1.5 transition hover:border-[rgba(0,212,255,0.15)] hover:text-[var(--text-primary)] ${INLINE_TEXT_TAG}`}
+          className={`flex items-center gap-1 px-3 py-1.5 transition hover:border-[var(--border-default)] hover:text-[var(--text-primary)] ${INLINE_TEXT_TAG}`}
         >
           {open ? "Collapse" : "Expand"}
           <IconChevronDown
@@ -75,8 +75,8 @@ export function AnomalySummaryTable({
                   key={row.ticker}
                   className={`border-b text-[var(--text-secondary)] ${CARD_DIVIDER}`}
                 >
-                  <td className="py-2 pr-3 font-data font-semibold text-[var(--text-primary)]">
-                    {formatTicker(row.ticker)}
+                  <td className="py-2 pr-3">
+                    <CompanyTickerCell ticker={row.ticker} />
                   </td>
                   <td className="py-2 pr-3 font-data">{row.rows.toLocaleString()}</td>
                   <td className="py-2 pr-3 font-data">{row.anomalies}</td>

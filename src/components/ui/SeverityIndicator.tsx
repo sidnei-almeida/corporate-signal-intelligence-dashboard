@@ -1,17 +1,26 @@
 import type { AnomalySeverity } from "@/lib/types";
-import { BADGE_BASE, SEVERITY_BADGE_CLASS } from "@/lib/badgeStyles";
+import { SEVERITY_METER_BY_SEVERITY } from "@/lib/severityMeter";
+import { SeverityMeter } from "@/components/ui/SeverityMeter";
 
 interface SeverityIndicatorProps {
   severity: AnomalySeverity;
   className?: string;
+  compact?: boolean;
+  showLabel?: boolean;
 }
 
-export function SeverityIndicator({ severity, className = "" }: SeverityIndicatorProps) {
+export function SeverityIndicator({
+  severity,
+  className = "",
+  compact = false,
+  showLabel = true,
+}: SeverityIndicatorProps) {
   return (
-    <span
-      className={`${BADGE_BASE} ${SEVERITY_BADGE_CLASS[severity]} ${className}`}
-    >
-      {severity}
-    </span>
+    <SeverityMeter
+      config={SEVERITY_METER_BY_SEVERITY[severity]}
+      className={className}
+      compact={compact}
+      showLabel={showLabel}
+    />
   );
 }

@@ -71,21 +71,21 @@ export function MemoInsightSidebar({ record }: MemoInsightSidebarProps) {
     >
       <InsightSection
         title="Risk Interpretation"
-        icon={<IconShield size={14} className="text-[#FF4560]" />}
+        icon={<IconShield size={14} className="text-[var(--accent-primary)]" />}
       >
         <p className="text-sm leading-relaxed text-[var(--text-secondary)]">{riskText}</p>
       </InsightSection>
 
       <InsightSection
         title="Recommended Monitoring"
-        icon={<IconEye size={14} className="text-[#00D4FF]" />}
+        icon={<IconEye size={14} className="text-[var(--accent-primary)]" />}
         className={`border-t pt-5 ${CARD_DIVIDER}`}
       >
         <ul className="space-y-2">
           {monitoring.map((item) => (
             <li
               key={item}
-              className="flex gap-2 text-sm leading-snug text-[var(--text-secondary)] before:mt-1.5 before:h-1 before:w-1 before:shrink-0 before:rounded-full before:bg-[rgba(0,212,255,0.15)] before:content-['']"
+              className="flex gap-2 text-sm leading-snug text-[var(--text-secondary)] before:mt-1.5 before:h-1 before:w-1 before:shrink-0 before:rounded-full before:bg-[rgba(148,163,184,0.35)] before:content-['']"
             >
               {item}
             </li>

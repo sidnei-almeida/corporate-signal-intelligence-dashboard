@@ -4,13 +4,13 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
-import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import {
   ANOMALY_TYPE_CHART_LABELS,
   ANOMALY_TYPE_LABELS,
@@ -22,8 +22,7 @@ import {
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
-  CHART_BAR_GRADIENT_SUFFIX,
-  chartBarGradientUrl,
+  chartBarCellFill,
   chartGridStroke,
   chartTickLineStroke,
   chartTooltipContentStyle,
@@ -70,7 +69,6 @@ export function AnomalyTypeChart({
 
   const data = [...chartData, ...extras].sort((a, b) => b.count - a.count);
   const barCount = Math.max(data.length, 4);
-  const barGradientFill = chartBarGradientUrl(CHART_BAR_GRADIENT_SUFFIX);
 
   return (
     <Card
@@ -93,7 +91,6 @@ export function AnomalyTypeChart({
             margin={{ top: 12, right: 24, left: 4, bottom: 12 }}
             barCategoryGap={barCount > 6 ? "18%" : "24%"}
           >
-            <ChartRechartsDefs barGradientId={CHART_BAR_GRADIENT_SUFFIX} />
             <CartesianGrid
               strokeDasharray="3 3"
               stroke={chartGridStroke}
@@ -122,11 +119,17 @@ export function AnomalyTypeChart({
             />
             <Bar
               dataKey="count"
-              fill={barGradientFill}
               radius={[0, 3, 3, 0]}
               maxBarSize={36}
               activeBar={chartActiveBar}
-            />
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={entry.key}
+                  fill={chartBarCellFill(index)}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

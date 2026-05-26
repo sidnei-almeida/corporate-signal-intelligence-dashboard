@@ -64,7 +64,7 @@ export function TickerAnomalyPanel({
                   className={`w-full rounded-xl border px-4 py-3 text-left transition ${
                     isSelected
                       ? "row-selected border"
-                      : `${METRIC_CELL} hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(0,212,255,0.15)]`
+                      : `${METRIC_CELL} hover:bg-[rgba(255,255,255,0.04)] hover:border-[var(--border-default)]`
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -75,7 +75,7 @@ export function TickerAnomalyPanel({
                       <span className={`text-xs ${scoreClass}`}>
                         {formatScore(record.anomaly_score)}
                       </span>
-                      <SeverityIndicator severity={severity} />
+                      <SeverityIndicator severity={severity} compact />
                     </div>
                   </div>
                   <p className="mt-1 text-xs text-[var(--text-muted)]">

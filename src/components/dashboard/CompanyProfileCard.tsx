@@ -1,9 +1,10 @@
+import { CompanyIdentity } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { MetricCell } from "@/components/ui/MetricCell";
 import { RiskTierIndicator } from "@/components/ui/RiskTierIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
 import { METRIC_CELL, SECTION_LABEL, metricValueClass } from "@/lib/cardVisuals";
-import { TYPE_DATA_ACCENT, TYPE_TICKER } from "@/lib/typography";
+import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { AnomalyRecord, AnomalySummary, CompanyProfile } from "@/lib/types";
 import {
   formatAnomalyRate,
@@ -20,6 +21,7 @@ import {
 interface CompanyProfileCardProps {
   profile: CompanyProfile | null;
   summaries: AnomalySummary[];
+  companyName?: string | null;
   tickerAnomalies?: AnomalyRecord[];
   loading?: boolean;
   fillHeight?: boolean;
@@ -28,6 +30,7 @@ interface CompanyProfileCardProps {
 export function CompanyProfileCard({
   profile,
   summaries,
+  companyName,
   tickerAnomalies = [],
   loading,
   fillHeight = false,
@@ -96,15 +99,21 @@ export function CompanyProfileCard({
       className={fillHeight ? "h-full w-full" : "w-full"}
     >
       <div className={`flex flex-col gap-4 ${fillHeight ? "min-h-0 flex-1" : ""}`}>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`${TYPE_TICKER} text-xl`}>
-            {formatTicker(profile.ticker)}
-          </span>
-          <RiskTierIndicator tier={tier} suffix="risk" />
-          <span className={`text-lg ${TYPE_DATA_ACCENT}`}>
-            {formatAnomalyRate(profile.anomaly_rate)}
-          </span>
-        </div>
+        <CompanyIdentity
+          ticker={profile.ticker}
+          name={companyName ?? "Monitored issuer"}
+          meta={`${profile.anomaly_count.toLocaleString()} anomalies · rank ${
+            rank ? `#${rank}` : "—"
+          }`}
+          trailing={
+            <>
+              <RiskTierIndicator tier={tier} suffix="risk" compact />
+              <span className={`text-sm ${TYPE_DATA_ACCENT}`}>
+                {formatAnomalyRate(profile.anomaly_rate)}
+              </span>
+            </>
+          }
+        />
 
         <dl className="grid grid-cols-2 gap-2">
           <MetricCell

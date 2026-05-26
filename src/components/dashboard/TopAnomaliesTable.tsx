@@ -1,5 +1,6 @@
 "use client";
 
+import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
@@ -11,7 +12,6 @@ import {
   formatNumber,
   formatPercent,
   formatScore,
-  formatTicker,
   getAnomalySeverity,
   primaryAnomalyType,
   splitAnomalyTypes,
@@ -47,7 +47,7 @@ export function TopAnomaliesTable({
     >
       <div className="-mx-4 max-h-[min(420px,55vh)] overflow-auto px-4 sm:-mx-5 sm:px-5 2xl:-mx-6 2xl:max-h-[480px] 2xl:px-6">
         <table className="w-full min-w-[880px] text-left text-xs leading-normal 2xl:text-sm">
-          <thead className="sticky top-0 z-10 bg-[var(--bg-surface)] backdrop-blur-sm">
+          <thead className="sticky top-0 z-10 bg-[var(--bg-surface)]">
             <tr className={`border-b ${CARD_DIVIDER}`}>
               <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pr-4 pt-1">Ticker</th>
               <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pr-4 pt-1">Date</th>
@@ -71,8 +71,8 @@ export function TopAnomaliesTable({
                     isSelected ? "row-selected border-transparent" : ""
                   }`}
                 >
-                  <td className="py-2.5 pr-4 font-data font-semibold text-[var(--text-primary)]">
-                    {formatTicker(record.ticker)}
+                  <td className="py-2.5 pr-4">
+                    <CompanyTickerCell ticker={String(record.ticker)} />
                   </td>
                   <td className="py-2.5 pr-4 font-data text-[var(--text-secondary)]">
                     {formatDate(String(record.date))}
@@ -81,7 +81,7 @@ export function TopAnomaliesTable({
                     {formatScore(record.anomaly_score)}
                   </td>
                   <td className="py-2.5 pr-4">
-                    <SeverityIndicator severity={severity} />
+                    <SeverityIndicator severity={severity} compact />
                   </td>
                   <td className="py-2.5 pr-4">
                     <AnomalyTypeTags

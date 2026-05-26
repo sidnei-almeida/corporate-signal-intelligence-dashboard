@@ -1,5 +1,6 @@
 "use client";
 
+import { CompanyIdentity } from "@/components/company-icons";
 import { IconPointer, IconSparkline } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -8,12 +9,10 @@ import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
 import {
   CARD_DIVIDER,
-  METRIC_CELL,
   SECTION_LABEL,
   SECTION_VALUE,
   metricValueClass,
 } from "@/lib/cardVisuals";
-import { TYPE_TICKER } from "@/lib/typography";
 import type { AnomalyRecord, AnomalySeverity, Company } from "@/lib/types";
 import {
   formatDate,
@@ -233,25 +232,14 @@ export function BriefingEventContext({
         <div className="flex h-full min-h-0 flex-col">
           <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="flex min-w-0 items-start gap-3">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center text-sm font-medium text-[var(--text-primary)] ${METRIC_CELL}`}
-                >
-                  {ticker.slice(0, 2)}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className={`${TYPE_TICKER} text-lg tracking-tight`}>
-                      {ticker}
-                    </p>
-                    {severity && <SeverityIndicator severity={severity} />}
-                  </div>
-                  <p className="truncate text-sm text-[var(--text-muted)]">{companyName}</p>
-                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
-                    {formatDate(String(selectedRecord.date))}
-                  </p>
-                </div>
-              </div>
+              <CompanyIdentity
+                ticker={ticker}
+                name={companyName}
+                meta={formatDate(String(selectedRecord.date))}
+                trailing={
+                  severity ? <SeverityIndicator severity={severity} /> : null
+                }
+              />
               <div className="text-right">
                 <p className={SECTION_LABEL}>Anomaly Score</p>
                 <p className={`text-xl ${scoreClass}`}>

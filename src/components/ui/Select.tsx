@@ -258,8 +258,8 @@ export function Select({
                   style={
                     isHighlighted && !option.disabled
                       ? {
-                          backgroundColor: "rgba(0, 212, 255, 0.12)",
-                          color: "#00d4ff",
+                          backgroundColor: "rgba(214, 176, 103, 0.10)",
+                          color: "var(--text-primary)",
                         }
                       : undefined
                   }

@@ -1,3 +1,4 @@
+import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { RiskTierIndicator } from "@/components/ui/RiskTierIndicator";
 import { CARD_DIVIDER } from "@/lib/cardVisuals";
@@ -63,11 +64,11 @@ export function MonitoredUniverseRanking({
                   <td className="py-2 pr-3 font-data text-[var(--text-muted)]">
                     {index + 1}
                   </td>
-                  <td className="py-2 pr-3 font-data font-semibold text-[var(--text-primary)]">
-                    {formatTicker(row.ticker)}
+                  <td className="py-2 pr-3">
+                    <CompanyTickerCell ticker={row.ticker} />
                   </td>
                   <td className="py-2 pr-3">
-                    <RiskTierIndicator tier={tier} />
+                    <RiskTierIndicator tier={tier} compact />
                   </td>
                   <td className={`py-2 pr-3 ${TYPE_DATA_ACCENT}`}>
                     {formatAnomalyRate(row.anomaly_rate)}

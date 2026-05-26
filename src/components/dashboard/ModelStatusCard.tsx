@@ -70,23 +70,15 @@ export function ModelStatusCard({
         className={`flex flex-col gap-4 ${fillHeight ? "min-h-0 flex-1" : ""}`}
       >
         <div className="flex items-start gap-3">
-          <div
-            className={`shrink-0 rounded-md border p-2 ${METRIC_CELL} ${
-              modelReady
-                ? "row-selected border"
-                : "border-[var(--high-border)] bg-[var(--high-bg)]"
-            }`}
-          >
-            <IconModelEngine
-              size={16}
-              className={modelReady ? "text-[#00D4FF]" : "text-[var(--high-text)]"}
-            />
-          </div>
+          <IconModelEngine
+            size={18}
+            className={modelReady ? "icon-premium mt-0.5" : "icon-muted mt-0.5"}
+          />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <IconCheck
                 size={14}
-                className={modelReady ? "text-[#00D4FF]" : "text-[var(--high-text)]"}
+                className={modelReady ? "text-[var(--accent-primary)]" : "text-[var(--high-text)]"}
               />
               <span className="text-sm font-medium text-[var(--text-primary)]">
                 {modelReady ? "Model operational" : "Model unavailable"}

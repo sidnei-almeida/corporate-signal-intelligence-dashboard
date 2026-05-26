@@ -1,14 +1,19 @@
-/** Chart palette — cyan / deep blue only (no warm chart colors) */
+/** Chart palette — enterprise dark (graphite + single warm accent) */
 
 import type { AnomalySeverity } from "@/lib/types";
 
-/** Data visualization colors — not used for severity badges */
-export const CHART_CYAN = "#00D4FF";
-export const CHART_BLUE = "#0066FF";
-export const CHART_SURFACE_STROKE = "#050507";
+/** Neutral series colors */
+export const CHART_GRAPHITE = "#49515D";
+export const CHART_SLATE = "#596273";
+export const CHART_ACCENT = "#D97A2B";
+export const CHART_SURFACE_STROKE = "#040506";
 
 export const CHART_BAR_GRADIENT_SUFFIX = "chartGradientPrimary";
 export const CHART_AREA_GRADIENT_SUFFIX = "areaGradient";
+
+/** @deprecated gradients replaced by solid fills; kept for area charts */
+export const CHART_STEEL = CHART_SLATE;
+export const CHART_BLUE = CHART_GRAPHITE;
 
 export function chartGradientIds(instanceId: string) {
   const prefix = instanceId.replace(/:/g, "");
@@ -22,71 +27,71 @@ export function chartBarGradientUrl(gradientId: string): string {
   return `url(#${gradientId})`;
 }
 
-/** Uniform bar gradient fill for every cell */
-export function chartBarCellFill(_index: number, gradientId: string): string {
-  return chartBarGradientUrl(gradientId);
+/** Top-ranked bar: warm accent; all others: neutral graphite */
+export function chartBarCellFill(index: number): string {
+  if (index === 0) return CHART_ACCENT;
+  return CHART_GRAPHITE;
 }
 
-export const chartBarFill = chartBarGradientUrl(CHART_BAR_GRADIENT_SUFFIX);
-export const chartBarHover = CHART_CYAN;
-export const chartBarStroke = "rgba(0, 212, 255, 0.2)";
+export const chartBarFill = CHART_GRAPHITE;
+export const chartBarHover = "rgba(217, 122, 43, 0.22)";
+export const chartBarStroke = "rgba(255, 255, 255, 0.05)";
 
-export const chartLineStroke = CHART_CYAN;
-export const chartPointHighlightFill = CHART_CYAN;
+export const chartLineStroke = CHART_SLATE;
+export const chartPointHighlightFill = CHART_ACCENT;
 export const chartPointHighlightStroke = CHART_SURFACE_STROKE;
 export const chartPointUnselectedStroke = "transparent";
 
-export const chartGridStroke = "rgba(0, 212, 255, 0.06)";
-export const chartAxisLine = { stroke: "rgba(0, 212, 255, 0.08)" };
-export const chartTickLineStroke = "rgba(0, 212, 255, 0.06)";
+export const chartGridStroke = "rgba(255, 255, 255, 0.04)";
+export const chartAxisLine = { stroke: "rgba(255, 255, 255, 0.05)" };
+export const chartTickLineStroke = "rgba(255, 255, 255, 0.04)";
 
 const chartTickFont =
   'var(--font-mono), "JetBrains Mono", ui-monospace, monospace';
 
 export const chartAxisTick = {
-  fill: "rgba(232, 237, 245, 0.28)",
+  fill: "rgba(245, 243, 238, 0.32)",
   fontSize: 10,
   fontFamily: chartTickFont,
   fontWeight: 400 as const,
 };
 
 export const chartAxisTickEmphasis = {
-  fill: "rgba(232, 237, 245, 0.55)",
+  fill: "rgba(245, 243, 238, 0.55)",
   fontSize: 11,
   fontWeight: 500 as const,
   fontFamily: chartTickFont,
 };
 
 export const chartAreaGradientStops = [
-  { offset: "0%", color: CHART_CYAN, opacity: 0.3 },
-  { offset: "100%", color: CHART_CYAN, opacity: 0 },
+  { offset: "0%", color: CHART_SLATE, opacity: 0.06 },
+  { offset: "100%", color: CHART_SLATE, opacity: 0 },
 ] as const;
 
 export const chartTooltipContentStyle = {
-  backgroundColor: "rgba(10, 10, 15, 0.95)",
-  border: "1px solid rgba(0, 212, 255, 0.15)",
+  backgroundColor: "#0b0e11",
+  border: "1px solid rgba(255, 255, 255, 0.06)",
   borderRadius: "8px",
   fontSize: "12px",
-  color: "#E8EDF5",
-  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.5)",
-  backdropFilter: "blur(12px)",
+  color: "#F5F3EE",
+  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
 };
 
 export const chartTooltipLabelStyle = {
-  color: "rgba(232, 237, 245, 0.55)",
+  color: "rgba(245, 243, 238, 0.55)",
   fontWeight: 600,
   marginBottom: 4,
   fontSize: "11px",
-  fontFamily: 'var(--font-display), "Syne", sans-serif',
+  fontFamily: 'var(--font-display), "Manrope", sans-serif',
 };
 
 export const chartTooltipItemStyle = {
-  color: "#E8EDF5",
+  color: "#F5F3EE",
   fontFamily: chartTickFont,
 };
 
 export const chartTooltipValueStyle = {
-  color: CHART_CYAN,
+  color: CHART_ACCENT,
   fontWeight: 500,
 };
 
@@ -96,43 +101,43 @@ export const chartTooltipItemStyleAccent = {
 };
 
 export const chartTooltipCursor = {
-  fill: "rgba(0, 212, 255, 0.06)",
-  stroke: "rgba(0, 212, 255, 0.12)",
+  fill: "rgba(255, 255, 255, 0.02)",
+  stroke: "rgba(255, 255, 255, 0.05)",
 };
 
 export const chartPlotBg = "transparent";
 
 export const chartActiveBar = {
-  fill: CHART_CYAN,
-  fillOpacity: 0.95,
+  fill: CHART_ACCENT,
+  fillOpacity: 0.9,
   stroke: chartBarStroke,
 };
 
 export const chartActiveDot = {
   r: 4,
-  fill: CHART_CYAN,
+  fill: CHART_ACCENT,
   stroke: CHART_SURFACE_STROKE,
   strokeWidth: 1.5,
 };
 
-/** Severity scatter/legend — intentional badge palette, not chart series colors */
+/** Severity scatter/legend — aligned with risk meter palette */
 export const chartSeverityFill: Record<AnomalySeverity, string> = {
-  Critical: "#FF4560",
-  High: "#FFB627",
-  Medium: "#00E5A0",
-  Low: "#00E5A0",
+  Critical: "#a85834",
+  High: "#b5763a",
+  Medium: "#8a7a52",
+  Low: "#646c78",
 };
 
 export const chartSeverityLegend = chartSeverityFill;
 
 /** @deprecated use chartBarCellFill */
-export function chartBarFillByRank(index: number, gradientId: string): string {
-  return chartBarCellFill(index, gradientId);
+export function chartBarFillByRank(index: number): string {
+  return chartBarCellFill(index);
 }
 
-/** @deprecated warm chart accents removed */
-export const chartAccentAlert = CHART_CYAN;
-export const chartAccentAmber = CHART_CYAN;
-export const chartAccentOrange = CHART_CYAN;
-export const chartAmberPrimary = CHART_CYAN;
-export const chartAmberLight = CHART_CYAN;
+/** @deprecated */
+export const chartAccentAlert = CHART_ACCENT;
+export const chartAccentAmber = CHART_ACCENT;
+export const chartAccentOrange = CHART_ACCENT;
+export const chartAmberPrimary = CHART_ACCENT;
+export const chartAmberLight = CHART_ACCENT;

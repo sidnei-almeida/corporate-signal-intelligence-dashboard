@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Syne } from "next/font/google";
+import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 import { APP_NAME } from "@/lib/constants";
 
-const syne = Syne({
+const manrope = Manrope({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -32,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${syne.variable} ${jetbrainsMono.variable} min-h-screen antialiased`}
+        className={`${manrope.variable} ${inter.variable} ${jetbrainsMono.variable} min-h-screen antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

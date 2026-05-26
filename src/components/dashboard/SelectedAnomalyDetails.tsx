@@ -1,17 +1,16 @@
+import { CompanyIdentity } from "@/components/company-icons";
 import { IconPointer } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
 import { MetricCell } from "@/components/ui/MetricCell";
 import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
 import { METRIC_CELL, SECTION_LABEL, metricValueClass } from "@/lib/cardVisuals";
-import { TYPE_TICKER } from "@/lib/typography";
 import type { AnomalyRecord } from "@/lib/types";
 import {
   formatDate,
   formatNumber,
   formatPercent,
   formatScore,
-  formatTicker,
   getAnomalySeverity,
   splitAnomalyTypes,
   toFiniteNumber,
@@ -102,18 +101,18 @@ export function SelectedAnomalyDetails({
       <div
         className={`flex flex-col gap-5 ${fillHeight ? "min-h-0 flex-1" : ""}`}
       >
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`${TYPE_TICKER} text-lg`}>
-            {formatTicker(record.ticker)}
-          </span>
-          <span className="text-sm text-[var(--text-secondary)]">
-            {formatDate(String(record.date))}
-          </span>
-          <SeverityIndicator severity={severity} />
-          <span className={`text-sm ${scoreClass}`}>
-            {formatScore(record.anomaly_score)}
-          </span>
-        </div>
+        <CompanyIdentity
+          ticker={String(record.ticker)}
+          meta={formatDate(String(record.date))}
+          trailing={
+            <>
+              <SeverityIndicator severity={severity} compact />
+              <span className={`text-sm ${scoreClass}`}>
+                {formatScore(record.anomaly_score)}
+              </span>
+            </>
+          }
+        />
 
         {types.length > 0 && <AnomalyTypeTags types={types} />}
 

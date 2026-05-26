@@ -15,7 +15,7 @@ export function StatusIndicator({ ok, label, className = "" }: StatusIndicatorPr
         className={
           ok
             ? STATUS_DOT_OK
-            : "h-[5px] w-[5px] shrink-0 rounded-full bg-[#FF4560] shadow-[0_0_6px_rgba(255,69,96,0.4)]"
+            : "h-[5px] w-[5px] shrink-0 rounded-full bg-[rgba(245,243,238,0.35)]"
         }
         aria-hidden
       />

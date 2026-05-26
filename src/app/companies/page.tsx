@@ -11,7 +11,7 @@ import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { useCompanyIntelligence } from "@/hooks/useCompanyIntelligence";
 import type { AnomalyRecord } from "@/lib/types";
-import { anomalyRecordsMatch, toFiniteNumber } from "@/lib/formatters";
+import { anomalyRecordsMatch, formatTicker, toFiniteNumber } from "@/lib/formatters";
 
 export default function CompaniesPage() {
   const {
@@ -30,6 +30,14 @@ export default function CompaniesPage() {
   const [selectedRecord, setSelectedRecord] = useState<AnomalyRecord | null>(
     null,
   );
+
+  const selectedCompanyName = useMemo(() => {
+    if (!selectedTicker) return null;
+    return (
+      companies.find((c) => formatTicker(c.ticker) === formatTicker(selectedTicker))
+        ?.company_name ?? null
+    );
+  }, [companies, selectedTicker]);
 
   const defaultRecord = useMemo(() => {
     if (!selectedTicker || tickerAnomalies.length === 0) return null;
@@ -79,6 +87,7 @@ export default function CompaniesPage() {
           <CompanyProfileCard
             profile={selectedTicker ? profile : null}
             summaries={summaries}
+            companyName={selectedCompanyName}
             tickerAnomalies={selectedTicker ? tickerAnomalies : []}
             loading={profileLoading && Boolean(selectedTicker)}
             fillHeight

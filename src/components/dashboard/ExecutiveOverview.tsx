@@ -36,7 +36,7 @@ function KpiCard({
     <div className={`kpi-card ${CARD_SHELL} h-full p-4 sm:p-5 2xl:p-6`}>
       <div className="flex items-center justify-between gap-2">
         <p className={TYPE_LABEL}>{label}</p>
-        <Icon className="shrink-0 text-accent opacity-60" size={18} />
+        <Icon className="icon-premium" size={17} />
       </div>
       <p className={`${TYPE_METRIC} mt-3`}>{value}</p>
       {hint && (

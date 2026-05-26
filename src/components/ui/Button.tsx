@@ -8,11 +8,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants = {
   primary:
-    "bg-[var(--accent-primary)] text-[#050507] hover:bg-[#33ddff] border border-[var(--border-default)] font-display font-medium shadow-[0_0_20px_var(--accent-primary-glow)] transition-colors duration-150",
+    "bg-[var(--accent-primary)] text-[#0b0d12] hover:bg-[var(--accent-btn-hover)] border border-[var(--border-default)] font-display font-medium shadow-none transition-colors duration-150",
   secondary:
-    "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] backdrop-blur-md font-display font-medium transition-colors duration-150",
+    "bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] font-display font-medium transition-colors duration-150",
   ghost:
-    "bg-transparent text-[var(--text-muted)] hover:bg-[rgba(0,212,255,0.06)] hover:text-[var(--text-primary)] border border-transparent font-display font-medium transition-colors duration-150",
+    "bg-transparent text-[var(--text-muted)] hover:bg-[rgba(255,255,255,0.03)] hover:text-[var(--text-primary)] border border-transparent font-display font-medium transition-colors duration-150",
 };
 
 export function Button({

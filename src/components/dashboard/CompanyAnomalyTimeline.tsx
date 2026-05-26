@@ -156,11 +156,7 @@ export function CompanyAnomalyTimeline({
                 data={points}
                 margin={{ top: 8, right: 12, left: 0, bottom: 4 }}
               >
-                <ChartRechartsDefs
-                  barGradientId={gradients.bar}
-                  areaGradientId={gradients.area}
-                  includeArea
-                />
+                <ChartRechartsDefs areaGradientId={gradients.area} />
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke={chartGridStroke}

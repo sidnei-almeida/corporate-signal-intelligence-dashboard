@@ -1,17 +1,16 @@
 "use client";
 
-import { useId } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
-import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import type { AnomalySummary } from "@/lib/types";
 import {
   formatAnomalyRate,
@@ -20,11 +19,11 @@ import {
 } from "@/lib/formatters";
 import {
   chartActiveBar,
-  chartBarGradientUrl,
+  chartBarCellFill,
+  chartBarStroke,
   chartAxisLine,
   chartAxisTick,
   chartAxisTickEmphasis,
-  chartGradientIds,
   chartGridStroke,
   chartTickLineStroke,
   chartTooltipContentStyle,
@@ -60,9 +59,6 @@ export function CompanyRiskRankingChart({
     });
 
   const barCount = Math.max(data.length, 1);
-  const instanceId = useId();
-  const gradients = chartGradientIds(instanceId);
-  const barGradientFill = chartBarGradientUrl(gradients.bar);
 
   return (
     <Card
@@ -81,7 +77,6 @@ export function CompanyRiskRankingChart({
               margin={{ top: 8, right: 48, left: 4, bottom: 8 }}
               barCategoryGap={barCount > 8 ? "14%" : "22%"}
             >
-              <ChartRechartsDefs barGradientId={gradients.bar} />
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke={chartGridStroke}
@@ -120,11 +115,18 @@ export function CompanyRiskRankingChart({
               />
               <Bar
                 dataKey="rate"
-                fill={barGradientFill}
                 radius={[0, 3, 3, 0]}
                 maxBarSize={28}
                 activeBar={chartActiveBar}
-              />
+              >
+                {data.map((entry, index) => (
+                  <Cell
+                    key={entry.ticker}
+                    fill={chartBarCellFill(index)}
+                    stroke={chartBarStroke}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

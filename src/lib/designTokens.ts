@@ -46,7 +46,7 @@ export const LINK_ACCENT =
   "text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]";
 
 export const SURFACE_MUTED =
-  "bg-[rgba(255,255,255,0.03)] border border-[rgba(0,212,255,0.08)]";
+  "bg-[rgba(255,255,255,0.03)] border border-[var(--border-subtle)]";
 
 export const METRIC_BOX = METRIC_CELL;
 
