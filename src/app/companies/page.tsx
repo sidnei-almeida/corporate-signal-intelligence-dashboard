@@ -82,8 +82,8 @@ export default function CompaniesPage() {
         }}
       />
 
-      <div className="grid w-full grid-cols-1 items-stretch gap-4 2xl:grid-cols-12 2xl:gap-5">
-        <div className="flex min-w-0 2xl:col-span-4">
+      <div className="grid w-full grid-cols-12 items-stretch gap-5">
+        <div className="flex min-w-0 col-span-4">
           <CompanyProfileCard
             profile={selectedTicker ? profile : null}
             summaries={summaries}
@@ -93,7 +93,7 @@ export default function CompaniesPage() {
             fillHeight
           />
         </div>
-        <div className="flex min-w-0 2xl:col-span-8">
+        <div className="flex min-w-0 col-span-8">
           <CompanyAnomalyTimeline
             ticker={selectedTicker}
             records={selectedTicker ? tickerAnomalies : []}
@@ -105,8 +105,8 @@ export default function CompaniesPage() {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-1 items-stretch gap-4 2xl:grid-cols-12 2xl:gap-5">
-        <div className="flex min-w-0 2xl:col-span-4">
+      <div className="grid w-full grid-cols-12 items-stretch gap-5">
+        <div className="flex min-w-0 col-span-4">
           <CompanySignalBreakdown
             ticker={selectedTicker}
             records={selectedTicker ? tickerAnomalies : []}
@@ -114,7 +114,7 @@ export default function CompaniesPage() {
             fillHeight
           />
         </div>
-        <div className="min-w-0 2xl:col-span-8">
+        <div className="min-w-0 col-span-8">
           <TopCompanyEvents
             ticker={selectedTicker}
             records={selectedTicker ? tickerAnomalies : []}

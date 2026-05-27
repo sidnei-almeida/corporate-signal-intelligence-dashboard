@@ -1,19 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { APP_NAME, APP_TAGLINE, DASHBOARD_NAV, ROUTE_META } from "@/lib/constants";
+import { APP_NAME, APP_TAGLINE, ROUTE_META } from "@/lib/constants";
 import {
   TYPE_PAGE_SUBTITLE,
   TYPE_PAGE_TITLE,
 } from "@/lib/typography";
 import type { HealthResponse, ModelInfo } from "@/lib/types";
 import { StatusIndicator } from "@/components/ui/StatusIndicator";
-
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
 
 interface HeaderProps {
   health: HealthResponse | null;
@@ -28,11 +22,11 @@ export function Header({ health, modelInfo }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[var(--bg-base)]">
-      <div className="flex w-full max-w-none flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8 2xl:px-10 2xl:py-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex w-full max-w-none flex-col gap-4 px-8 py-5 2xl:px-10 2xl:py-6">
+        <div className="flex flex-row flex-wrap items-end justify-between gap-4">
           <div className="min-w-0">
             <p className="label-caps">{APP_NAME}</p>
-            <p className="mt-1.5 hidden max-w-2xl text-xs leading-relaxed text-[var(--text-secondary)] sm:block">
+            <p className="mt-1.5 max-w-2xl text-xs leading-relaxed text-[var(--text-secondary)]">
               {APP_TAGLINE}
             </p>
             <h1 className={`${TYPE_PAGE_TITLE} mt-3`}>{routeMeta.title}</h1>
@@ -51,23 +45,6 @@ export function Header({ health, modelInfo }: HeaderProps) {
             />
           </div>
         </div>
-
-        <nav className="flex gap-1 overflow-x-auto border-t border-[var(--border-subtle)] pt-3 lg:hidden">
-          {DASHBOARD_NAV.map(({ label, href }) => {
-            const active = isActive(pathname, href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                  active ? "nav-active" : "nav-inactive"
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
       </div>
     </header>
   );

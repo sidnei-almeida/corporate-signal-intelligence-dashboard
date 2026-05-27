@@ -39,7 +39,7 @@ export default function OverviewPage() {
         health={health}
       />
 
-      <div className="grid w-full grid-cols-1 items-start gap-4 2xl:grid-cols-2 2xl:gap-5">
+      <div className="grid w-full grid-cols-2 items-start gap-5">
         <div className="min-w-0">
           <AnomalyTypeChart types={anomalyTypes} />
         </div>
@@ -48,11 +48,11 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-1 items-stretch gap-4 2xl:grid-cols-12 2xl:gap-5">
-        <div className="flex min-w-0 2xl:col-span-8">
+      <div className="grid w-full grid-cols-12 items-stretch gap-5">
+        <div className="flex min-w-0 col-span-8">
           <TopAnomaliesPreview records={topAnomalies} />
         </div>
-        <div className="flex min-w-0 2xl:col-span-4">
+        <div className="flex min-w-0 col-span-4">
           <ModelStatusCard
             modelInfo={modelInfo}
             health={health}

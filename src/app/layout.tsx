@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Manrope } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -29,6 +29,12 @@ export const metadata: Metadata = {
   title: APP_NAME,
   description:
     "Anomaly detection and AI briefings for public company monitoring — market signals, SEC filings, and corporate intelligence.",
+};
+
+/** Desktop dashboard canvas — preserves layout on mobile browsers */
+export const viewport: Viewport = {
+  width: 1440,
+  initialScale: 1,
 };
 
 export default function RootLayout({

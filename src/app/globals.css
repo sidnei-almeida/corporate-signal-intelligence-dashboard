@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 :root {
+  /* Minimum horizontal canvas for operational dashboard layout */
+  --dashboard-min-width: 1440px;
+
   /* Minimal palette: 90% neutrals, 10% warm accent */
   --bg-base: #040506;
   --bg-surface: #07090c;
@@ -138,6 +141,8 @@
 
 html {
   scroll-behavior: smooth;
+  min-width: var(--dashboard-min-width);
+  overflow-x: auto;
 }
 
 body {
@@ -155,11 +160,23 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  min-width: var(--dashboard-min-width);
+  overflow-x: auto;
+}
+
+.app-shell,
+.dashboard-workspace,
+.dashboard-desktop-canvas {
+  min-width: var(--dashboard-min-width);
 }
 
 .app-shell {
   background: transparent;
+}
+
+.dashboard-desktop-canvas {
+  width: 100%;
+  max-width: none;
 }
 
 h1 {

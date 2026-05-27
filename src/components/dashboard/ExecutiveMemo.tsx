@@ -124,7 +124,7 @@ export function ExecutiveMemo({
 
         {!loading && hasBriefing && briefing?.briefing && selectedRecord && (
           <div className={`executive-memo-reader max-h-[620px] overflow-y-auto p-5 2xl:max-h-[720px] 2xl:p-6 ${METRIC_CELL}`}>
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_16rem] 2xl:grid-cols-[minmax(0,1fr)_17.5rem]">
+            <div className="grid grid-cols-[minmax(0,1fr)_17.5rem] gap-6">
               <div className="min-w-0 pr-1">
                 <BriefingMarkdown content={briefing.briefing} />
               </div>

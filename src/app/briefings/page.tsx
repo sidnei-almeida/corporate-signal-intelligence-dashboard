@@ -143,8 +143,8 @@ export default function BriefingsPage() {
 
   return (
     <div className="w-full max-w-none">
-      <section className="grid grid-cols-1 gap-5 2xl:grid-cols-12 2xl:items-stretch">
-        <div className="min-w-0 2xl:col-span-4">
+      <section className="grid grid-cols-12 items-stretch gap-5">
+        <div className="min-w-0 col-span-4">
           <AnomalyEventSelector
             companies={companies}
             records={sortedFiltered}
@@ -161,7 +161,7 @@ export default function BriefingsPage() {
           />
         </div>
 
-        <div className="min-w-0 2xl:col-span-8">
+        <div className="min-w-0 col-span-8">
           <BriefingEventContext
             selectedRecord={activeAnomaly}
             companies={companies}

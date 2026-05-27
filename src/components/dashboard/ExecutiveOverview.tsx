@@ -70,7 +70,7 @@ export function ExecutiveOverview({
   )[0];
 
   return (
-    <section className="grid w-full max-w-none grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <section className="grid w-full max-w-none grid-cols-5 gap-4">
       <KpiCard
         label="Monitored Companies"
         value={String(monitored)}

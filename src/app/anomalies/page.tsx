@@ -76,11 +76,11 @@ export default function AnomaliesPage() {
         onAnomalyTypeChange={setTypeFilter}
       />
 
-      <div className="grid w-full grid-cols-1 items-stretch gap-4 xl:grid-cols-12">
-        <div className="flex min-w-0 xl:col-span-5">
+      <div className="grid w-full grid-cols-12 items-stretch gap-4">
+        <div className="flex min-w-0 col-span-5">
           <AnomalyTypeChart types={anomalyTypes} fillHeight />
         </div>
-        <div className="flex min-w-0 xl:col-span-7">
+        <div className="flex min-w-0 col-span-7">
           <SelectedAnomalyDetails record={selectedRecord} fillHeight />
         </div>
       </div>
