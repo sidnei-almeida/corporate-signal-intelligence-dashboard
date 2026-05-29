@@ -50,27 +50,51 @@ export const DASHBOARD_NAV = [
 
 export const ROUTE_META: Record<
   string,
-  { title: string; subtitle: string }
+  { title: string; subtitle: string; context: readonly string[] }
 > = {
   "/": {
-    title: "Overview",
+    title: "Market Anomaly Overview",
     subtitle:
-      "Executive snapshot · anomaly detection · AI briefing readiness",
+      "AI-assisted monitoring for public companies, unusual market behavior, and briefing-ready risk signals.",
+    context: [
+      "Executive snapshot",
+      "Anomaly detection",
+      "Issuer risk ranking",
+      "Briefing readiness",
+    ],
   },
   "/anomalies": {
-    title: "Anomaly Investigation",
+    title: "Anomaly Signal Investigation",
     subtitle:
-      "Explore abnormal events, inspect signal drivers, and prepare AI briefings.",
+      "Deep-dive into abnormal market events, signal drivers, and briefing-ready anomaly records.",
+    context: [
+      "Event explorer",
+      "Signal drivers",
+      "Severity ranking",
+      "Briefing prep",
+    ],
   },
   "/companies": {
-    title: "Company Intelligence",
+    title: "Issuer Intelligence Profile",
     subtitle:
-      "Issuer-level anomaly profile, event history, and signal breakdown.",
+      "Company-level anomaly history, signal composition, and cross-event risk context.",
+    context: [
+      "Issuer profiles",
+      "Event timeline",
+      "Signal breakdown",
+      "Risk posture",
+    ],
   },
   "/briefings": {
-    title: "AI Executive Briefings",
+    title: "Executive Briefing Studio",
     subtitle:
-      "Generate analyst-style narratives from selected anomaly context.",
+      "Analyst-style narratives generated from selected anomaly context and issuer signals.",
+    context: [
+      "AI narratives",
+      "Anomaly context",
+      "Executive tone",
+      "Export ready",
+    ],
   },
 };
 
