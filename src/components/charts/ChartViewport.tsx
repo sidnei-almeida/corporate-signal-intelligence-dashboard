@@ -29,6 +29,24 @@ interface ChartViewportProps {
 
 const DEFAULT_DESKTOP_CLASS = "h-[280px] md:h-[320px] 2xl:h-[360px]";
 
+function measureNodeWidth(node: HTMLElement): number {
+  const own = Math.floor(node.getBoundingClientRect().width);
+  if (own > 0) return own;
+
+  let parent: HTMLElement | null = node.parentElement;
+  while (parent) {
+    const parentWidth = Math.floor(parent.getBoundingClientRect().width);
+    if (parentWidth > 0) return parentWidth;
+    parent = parent.parentElement;
+  }
+
+  if (typeof window !== "undefined") {
+    return Math.max(0, window.innerWidth - 32);
+  }
+
+  return 0;
+}
+
 export function ChartViewport({
   children,
   className = "",
@@ -43,7 +61,7 @@ export function ChartViewport({
   const measureWidth = useCallback(() => {
     const node = containerRef.current;
     if (!node) return 0;
-    return Math.max(0, Math.floor(node.getBoundingClientRect().width));
+    return measureNodeWidth(node);
   }, []);
 
   const publishWidth = useCallback((width: number) => {
@@ -71,7 +89,7 @@ export function ChartViewport({
     });
 
     const t100 = window.setTimeout(sync, 100);
-    const t300 = window.setTimeout(forceChartResize, 300);
+    const t300 = window.setTimeout(sync, 300);
 
     return () => {
       observer.disconnect();
@@ -89,9 +107,9 @@ export function ChartViewport({
 
   const ctx: ChartViewportContext = {
     isMobile,
-    yAxisWidth: (desktopWidth, mobileWidth = 80) =>
+    yAxisWidth: (desktopWidth, mobileWidth = 90) =>
       isMobile ? mobileWidth : desktopWidth,
-    tickFontSize: (desktopSize, mobileSize = 9) =>
+    tickFontSize: (desktopSize, mobileSize = 10) =>
       isMobile ? mobileSize : desktopSize,
   };
 
@@ -99,7 +117,7 @@ export function ChartViewport({
     return (
       <div
         ref={containerRef}
-        className={`chart-embedded chart-viewport w-full ${className}`}
+        className={`chart-embedded chart-viewport w-full max-w-full ${className}`}
         data-chart-viewport
         style={{
           ["--mobile-chart-height" as string]: `${mobileHeight}px`,
@@ -107,6 +125,7 @@ export function ChartViewport({
           minHeight: mobileHeight,
           maxHeight: mobileHeight,
           width: "100%",
+          maxWidth: "100%",
           ...style,
         }}
       >

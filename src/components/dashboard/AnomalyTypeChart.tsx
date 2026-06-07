@@ -75,9 +75,9 @@ export function AnomalyTypeChart({
       title="Anomaly Type Distribution"
       subtitle="Rule-based classification counts"
       fillHeight={fillHeight}
-      className={fillHeight ? "chart-card h-full w-full" : "chart-card w-full"}
+      className={fillHeight ? "chart-card anomaly-type-chart h-full w-full" : "chart-card anomaly-type-chart w-full"}
     >
-      <ChartViewport>
+      <ChartViewport mobileHeight={240}>
         {({ yAxisWidth, tickFontSize }) => (
           <BarChart
             data={data}
@@ -99,7 +99,7 @@ export function AnomalyTypeChart({
             <YAxis
               type="category"
               dataKey="type"
-              width={yAxisWidth(132, 80)}
+              width={yAxisWidth(132, 90)}
               tick={{
                 ...chartAxisTickEmphasis,
                 fontSize: tickFontSize(11, 9),

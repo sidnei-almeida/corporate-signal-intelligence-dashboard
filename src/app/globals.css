@@ -1853,9 +1853,21 @@ textarea::placeholder {
   [class*="grid-cols-5"] {
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
     gap: var(--mob-card-gap) !important;
     padding: 0 !important;
     margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: unset !important;
+  }
+
+  .charts-row > *,
+  .charts-grid > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
   }
 
   [class*="col-span"] {
@@ -1865,10 +1877,38 @@ textarea::placeholder {
   }
 
   /* ── Chart cards ── */
-  .chart-card {
+  .chart-card,
+  .chart-card.card-surface {
     width: 100% !important;
-    min-width: unset !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     margin-bottom: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+  }
+
+  .anomaly-type-chart [data-chart-viewport] {
+    --mobile-chart-height: 240px;
+    height: 240px !important;
+    min-height: 240px !important;
+    max-height: 240px !important;
+  }
+
+  .company-risk-chart [data-chart-viewport] {
+    --mobile-chart-height: 280px;
+    height: 280px !important;
+    min-height: 280px !important;
+    max-height: 280px !important;
+  }
+
+  .anomaly-type-chart [data-chart-viewport] .recharts-responsive-container {
+    height: 240px !important;
+    min-height: 240px !important;
+  }
+
+  .company-risk-chart [data-chart-viewport] .recharts-responsive-container {
+    height: 280px !important;
+    min-height: 280px !important;
   }
 
   .chart-card > .card-surface,
@@ -1927,6 +1967,8 @@ textarea::placeholder {
   [data-chart-viewport],
   .chart-viewport {
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     height: var(--mobile-chart-height, 200px) !important;
     min-height: var(--mobile-chart-height, 200px) !important;
     max-height: var(--mobile-chart-height, 200px) !important;
@@ -1934,22 +1976,29 @@ textarea::placeholder {
     position: relative !important;
     overflow: visible !important;
     margin-top: 0 !important;
+    box-sizing: border-box !important;
   }
 
   [data-chart-viewport] .recharts-responsive-container {
     width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     height: var(--mobile-chart-height, 200px) !important;
     min-height: var(--mobile-chart-height, 200px) !important;
   }
 
   [data-chart-viewport] .recharts-wrapper {
-    width: 100% !important;
     height: 100% !important;
   }
 
-  .recharts-yAxis .recharts-cartesian-axis-tick-value,
-  .recharts-yAxis text {
-    font-size: 9px !important;
+  .recharts-yAxis .recharts-cartesian-axis-tick {
+    width: auto !important;
+  }
+
+  .recharts-yAxis text,
+  .recharts-yAxis .recharts-cartesian-axis-tick-value {
+    font-size: 10px !important;
+    text-anchor: end !important;
   }
 
   .recharts-xAxis text,

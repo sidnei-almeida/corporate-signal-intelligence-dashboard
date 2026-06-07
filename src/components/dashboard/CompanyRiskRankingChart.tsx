@@ -64,12 +64,12 @@ export function CompanyRiskRankingChart({
     <Card
       title="Company Risk Ranking"
       subtitle={`Top ${limit} issuers by anomaly rate · lower scores in timeline = higher event risk`}
-      className="chart-card w-full"
+      className="chart-card company-risk-chart w-full"
     >
       {data.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">No company summary data available.</p>
       ) : (
-        <ChartViewport>
+        <ChartViewport mobileHeight={280}>
           {({ yAxisWidth, tickFontSize }) => (
             <BarChart
               data={data}
