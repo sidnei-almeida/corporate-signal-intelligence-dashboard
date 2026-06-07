@@ -72,7 +72,7 @@ export default function CompaniesPage() {
   }
 
   return (
-    <div className="flex w-full max-w-none flex-col gap-4 2xl:gap-5">
+    <div className="dashboard-page-content flex w-full max-w-none flex-col gap-4 2xl:gap-5">
       <CompanySelector
         companies={companies}
         selectedTicker={selectedTicker}

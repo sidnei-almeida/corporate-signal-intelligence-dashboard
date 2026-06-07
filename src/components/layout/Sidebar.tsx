@@ -23,7 +23,8 @@ export function Sidebar() {
 
   return (
     <aside
-      className="fixed inset-y-0 left-0 z-30 flex shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)]"
+      className="dashboard-sidebar sidebar fixed inset-y-0 left-0 z-30 flex shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)]"
+      data-component="sidebar"
       style={{ width: SIDEBAR_WIDTH_PX }}
     >
       <div className="flex h-full flex-col px-3 py-5">

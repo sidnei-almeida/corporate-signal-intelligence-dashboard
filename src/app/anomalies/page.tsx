@@ -65,7 +65,7 @@ export default function AnomaliesPage() {
   }
 
   return (
-    <div className="flex w-full max-w-none flex-col gap-4 2xl:gap-5">
+    <div className="dashboard-page-content flex w-full max-w-none flex-col gap-4 2xl:gap-5">
       <AnomalyFilters
         tickers={tickers.length > 0 ? tickers : companies.map((c) => c.ticker)}
         ticker={tickerFilter}

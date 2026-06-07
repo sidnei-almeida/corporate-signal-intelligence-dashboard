@@ -6,11 +6,12 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartViewport } from "@/components/charts/ChartViewport";
+import { MOBILE_CHART_HEIGHT_PX } from "@/lib/chartResize";
 import { Card } from "@/components/ui/Card";
 import { MetricCell } from "@/components/ui/MetricCell";
 import { ANOMALY_TYPE_LABELS } from "@/lib/constants";
@@ -103,6 +104,10 @@ export function CompanySignalBreakdown({
   }, [typeCounts, anomalyRecords]);
 
   const chartMinHeight = Math.max(200, chartData.length * 36);
+  const mobileChartHeight = Math.max(
+    MOBILE_CHART_HEIGHT_PX,
+    Math.min(chartMinHeight, 280),
+  );
   const hasSignals = Boolean(ticker) && chartData.length > 0;
   const body = (
     <>
@@ -145,11 +150,13 @@ export function CompanySignalBreakdown({
                 </span>
               ))}
             </div>
-            <div
-              className="chart-embedded min-h-[200px] w-full flex-1"
+            <ChartViewport
+              className="min-h-[200px] flex-1"
               style={{ minHeight: chartMinHeight }}
+              desktopClassName="min-h-[200px]"
+              mobileHeight={mobileChartHeight}
             >
-              <ResponsiveContainer width="100%" height="100%">
+              {({ yAxisWidth, tickFontSize }) => (
                 <BarChart
                   data={chartData}
                   layout="vertical"
@@ -162,15 +169,18 @@ export function CompanySignalBreakdown({
                   />
                   <XAxis
                     type="number"
-                    tick={chartAxisTick}
+                    tick={{ ...chartAxisTick, fontSize: tickFontSize(11, 8) }}
                     axisLine={chartAxisLine}
                     allowDecimals={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="type"
-                    width={110}
-                    tick={chartAxisTickEmphasis}
+                    width={yAxisWidth(110, 80)}
+                    tick={{
+                      ...chartAxisTickEmphasis,
+                      fontSize: tickFontSize(11, 9),
+                    }}
                     axisLine={chartAxisLine}
                     tickLine={false}
                   />
@@ -195,8 +205,8 @@ export function CompanySignalBreakdown({
                     ))}
                   </Bar>
                 </BarChart>
-              </ResponsiveContainer>
-            </div>
+              )}
+            </ChartViewport>
           </div>
 
           <div className={`shrink-0 border-t pt-4 ${CARD_DIVIDER}`}>

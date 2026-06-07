@@ -17,23 +17,26 @@ export function Header({ health, modelInfo }: HeaderProps) {
   const databaseOk = Boolean(health?.data_source);
 
   return (
-    <header className="dashboard-page-header dashboard-hero sticky top-0 z-20">
+    <header className="dashboard-page-header dashboard-hero page-hero page-header sticky top-0 z-20">
+      <div className="hero-backdrop" aria-hidden />
+      <div className="hero-overlay" aria-hidden />
+
       <div className="dashboard-page-header-content dashboard-hero-content">
         <div className="hero-copy">
-          <span className="hero-eyebrow">{APP_NAME}</span>
+          <span className="hero-eyebrow category-label">{APP_NAME}</span>
 
           <h1>{routeMeta.title}</h1>
 
           <p className="hero-subtitle">{routeMeta.subtitle}</p>
 
-          <div className="hero-context">
+          <div className="hero-context tags-row">
             {routeMeta.context.map((item) => (
               <span key={item}>{item}</span>
             ))}
           </div>
         </div>
 
-        <div className="hero-status">
+        <div className="hero-status status-row">
           <span className={apiOk ? undefined : "hero-status-off"}>
             {apiOk ? "API online" : "API degraded"}
           </span>

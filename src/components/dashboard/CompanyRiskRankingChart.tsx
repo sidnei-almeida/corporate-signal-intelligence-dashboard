@@ -5,11 +5,11 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartViewport } from "@/components/charts/ChartViewport";
 import { Card } from "@/components/ui/Card";
 import type { AnomalySummary } from "@/lib/types";
 import {
@@ -64,13 +64,13 @@ export function CompanyRiskRankingChart({
     <Card
       title="Company Risk Ranking"
       subtitle={`Top ${limit} issuers by anomaly rate · lower scores in timeline = higher event risk`}
-      className="w-full"
+      className="chart-card w-full"
     >
       {data.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">No company summary data available.</p>
       ) : (
-        <div className="chart-embedded h-[280px] w-full md:h-[320px] 2xl:h-[360px]">
-          <ResponsiveContainer width="100%" height="100%">
+        <ChartViewport>
+          {({ yAxisWidth, tickFontSize }) => (
             <BarChart
               data={data}
               layout="vertical"
@@ -85,15 +85,18 @@ export function CompanyRiskRankingChart({
               <XAxis
                 type="number"
                 tickFormatter={(v) => `${(Number(v) * 100).toFixed(1)}%`}
-                tick={chartAxisTick}
+                tick={{ ...chartAxisTick, fontSize: tickFontSize(11, 8) }}
                 axisLine={chartAxisLine}
                 tickLine={{ stroke: chartTickLineStroke }}
               />
               <YAxis
                 type="category"
                 dataKey="ticker"
-                width={56}
-                tick={chartAxisTickEmphasis}
+                width={yAxisWidth(56, 52)}
+                tick={{
+                  ...chartAxisTickEmphasis,
+                  fontSize: tickFontSize(11, 9),
+                }}
                 axisLine={chartAxisLine}
                 tickLine={false}
               />
@@ -128,8 +131,8 @@ export function CompanyRiskRankingChart({
                 ))}
               </Bar>
             </BarChart>
-          </ResponsiveContainer>
-        </div>
+          )}
+        </ChartViewport>
       )}
     </Card>
   );

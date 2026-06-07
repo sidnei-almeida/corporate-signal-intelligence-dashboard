@@ -33,14 +33,14 @@ function KpiCard({
   icon: DashboardIconComponent;
 }) {
   return (
-    <div className={`kpi-card ${CARD_SHELL} h-full p-4 sm:p-5 2xl:p-6`}>
+    <div className={`stat-card kpi-card metric-card ${CARD_SHELL} h-full p-4 sm:p-5 2xl:p-6`}>
       <div className="flex items-center justify-between gap-2">
-        <p className={TYPE_LABEL}>{label}</p>
-        <Icon className="icon-premium" size={17} />
+        <p className={`card-label ${TYPE_LABEL}`}>{label}</p>
+        <Icon className="card-icon icon-premium" size={17} />
       </div>
-      <p className={`${TYPE_METRIC} mt-3`}>{value}</p>
+      <p className={`card-value ${TYPE_METRIC} mt-3`}>{value}</p>
       {hint && (
-        <p className="mt-1 font-display text-[11px] font-normal text-[var(--text-secondary)] 2xl:text-xs">
+        <p className="card-sub mt-1 font-display text-[11px] font-normal text-[var(--text-secondary)] 2xl:text-xs">
           {hint}
         </p>
       )}
@@ -70,7 +70,10 @@ export function ExecutiveOverview({
   )[0];
 
   return (
-    <section className="grid w-full max-w-none grid-cols-5 gap-4">
+    <section
+      className="stat-cards-row metrics-row kpi-row grid w-full max-w-none grid-cols-5 gap-4"
+      data-component="stat-cards"
+    >
       <KpiCard
         label="Monitored Companies"
         value={String(monitored)}

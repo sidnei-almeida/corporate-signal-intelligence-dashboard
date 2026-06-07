@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MobileAnomalyEventList } from "@/components/dashboard/MobileAnomalyEventList";
 import { IconArrowRight } from "@/components/icons";
 import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
@@ -46,21 +47,23 @@ export function TopAnomaliesPreview({
       action={
         <Link
           href="/anomalies"
-          className="flex items-center gap-1 text-xs font-medium link-accent transition hover:text-[var(--accent-primary)] 2xl:text-sm"
+          className="view-all see-all flex items-center gap-1 text-xs font-medium link-accent transition hover:text-[var(--accent-primary)] 2xl:text-sm"
         >
           View all
           <IconArrowRight size={16} />
         </Link>
       }
       fillHeight
-      className="h-full w-full"
+      className="anomaly-table events-table h-full w-full"
+      data-component="events-table"
     >
       {sorted.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">No anomaly events available.</p>
       ) : (
-        <div className="-mx-1 flex min-h-0 flex-1 flex-col px-1">
-          <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left">
+        <>
+          <div className="events-table-desktop -mx-1 flex min-h-0 flex-1 flex-col px-1">
+            <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
+              <table className="w-full min-w-[640px] border-collapse text-left">
               <thead className="sticky top-0 z-10 bg-[var(--bg-surface)]">
                 <tr className={`border-b ${CARD_DIVIDER}`}>
                   <th className={thClass}>Ticker</th>
@@ -123,8 +126,10 @@ export function TopAnomaliesPreview({
                 })}
               </tbody>
             </table>
+            </div>
           </div>
-        </div>
+          <MobileAnomalyEventList records={sorted} />
+        </>
       )}
     </Card>
   );

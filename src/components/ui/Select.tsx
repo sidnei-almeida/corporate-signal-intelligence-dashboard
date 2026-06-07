@@ -177,10 +177,10 @@ export function Select({
   return (
     <div
       ref={rootRef}
-      className={`custom-select flex flex-col gap-1 ${className}`}
+      className={`custom-select filter-group filter-item flex flex-col gap-1 ${className}`}
     >
       {label ? (
-        <label id={`${selectId}-label`} htmlFor={`${selectId}-trigger`} className={TYPE_LABEL}>
+        <label id={`${selectId}-label`} htmlFor={`${selectId}-trigger`} className={`filter-label ${TYPE_LABEL}`}>
           {label}
         </label>
       ) : null}
@@ -200,7 +200,7 @@ export function Select({
       <button
         type="button"
         id={`${selectId}-trigger`}
-        className="custom-select-trigger"
+        className="custom-select-trigger filter-select"
         disabled={disabled}
         data-open={open}
         aria-haspopup="listbox"

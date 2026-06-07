@@ -32,14 +32,14 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="flex w-full max-w-none flex-col gap-4 2xl:gap-5">
+    <div className="dashboard-page-content flex w-full max-w-none flex-col gap-4 2xl:gap-5">
       <ExecutiveOverview
         companies={companies}
         summaries={summaries}
         health={health}
       />
 
-      <div className="grid w-full grid-cols-2 items-start gap-5">
+      <div className="grid w-full grid-cols-2 items-start gap-5 charts-row charts-grid">
         <div className="min-w-0">
           <AnomalyTypeChart types={anomalyTypes} />
         </div>
@@ -48,7 +48,7 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-12 items-stretch gap-5">
+      <div className="bottom-row bottom-grid grid w-full grid-cols-12 items-stretch gap-5">
         <div className="flex min-w-0 col-span-8">
           <TopAnomaliesPreview records={topAnomalies} />
         </div>

@@ -27,7 +27,7 @@ export function AnomalyFilters({
   onAnomalyTypeChange,
 }: AnomalyFiltersProps) {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="filter-row filters grid grid-cols-3 gap-3" data-component="filter">
       <Select
         label="Ticker"
         value={ticker}

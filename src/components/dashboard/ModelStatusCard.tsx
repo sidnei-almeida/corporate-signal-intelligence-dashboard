@@ -64,12 +64,13 @@ export function ModelStatusCard({
       title="ML Pipeline"
       subtitle="System & model status"
       fillHeight={fillHeight}
-      className={fillHeight ? "h-full w-full" : "h-fit w-full"}
+      className={fillHeight ? "pipeline-card h-full w-full" : "pipeline-card h-fit w-full"}
+      data-component="ml-pipeline"
     >
       <div
         className={`flex flex-col gap-4 ${fillHeight ? "min-h-0 flex-1" : ""}`}
       >
-        <div className="flex items-start gap-3">
+        <div className="pipeline-status model-status flex items-start gap-3">
           <IconModelEngine
             size={18}
             className={modelReady ? "icon-premium mt-0.5" : "icon-muted mt-0.5"}
@@ -98,20 +99,20 @@ export function ModelStatusCard({
           </div>
         </div>
 
-        <dl className="grid grid-cols-2 gap-2">
-          <MetricCell label="Engine" value="Isolation Forest" />
-          <MetricCell label="Type" value={String(typeLabel)} />
-          <MetricCell label="Features" value={String(features)} mono />
-          <MetricCell label="Output" value="Score + Type" />
-          <MetricCell label="AI Briefing" value="Groq" />
-          <MetricCell label="Backend" value="FastAPI" />
-          <MetricCell label="AI model" value={briefingModel} />
-          <MetricCell label="Artifact" value={String(artifactLabel)} truncate />
+        <dl className="pipeline-grid pipeline-specs pipeline-details grid grid-cols-2 gap-2">
+          <MetricCell className="pipeline-item spec-item" label="Engine" value="Isolation Forest" />
+          <MetricCell className="pipeline-item spec-item" label="Type" value={String(typeLabel)} />
+          <MetricCell className="pipeline-item spec-item" label="Features" value={String(features)} mono />
+          <MetricCell className="pipeline-item spec-item" label="Output" value="Score + Type" />
+          <MetricCell className="pipeline-item spec-item" label="AI Briefing" value="Groq" />
+          <MetricCell className="pipeline-item spec-item" label="Backend" value="FastAPI" />
+          <MetricCell className="pipeline-item spec-item" label="AI model" value={briefingModel} />
+          <MetricCell className="pipeline-item spec-item" label="Artifact" value={String(artifactLabel)} truncate />
         </dl>
 
         <div>
           <p className={`mb-2 ${SECTION_LABEL}`}>Pipeline flow</p>
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="pipeline-flow flex flex-wrap items-center gap-1">
             {PIPELINE_STEPS.map((step, index) => (
               <span key={step} className="flex items-center gap-1">
                 <span className={PIPELINE_STEP}>{step}</span>

@@ -33,8 +33,10 @@ export const metadata: Metadata = {
 
 /** Desktop dashboard canvas — preserves layout on mobile browsers */
 export const viewport: Viewport = {
-  width: 1440,
+  width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

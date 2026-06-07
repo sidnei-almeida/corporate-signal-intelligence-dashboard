@@ -5,11 +5,11 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartViewport } from "@/components/charts/ChartViewport";
 import { Card } from "@/components/ui/Card";
 import {
   ANOMALY_TYPE_CHART_LABELS,
@@ -75,16 +75,10 @@ export function AnomalyTypeChart({
       title="Anomaly Type Distribution"
       subtitle="Rule-based classification counts"
       fillHeight={fillHeight}
-      className={fillHeight ? "h-full w-full" : "w-full"}
+      className={fillHeight ? "chart-card h-full w-full" : "chart-card w-full"}
     >
-      <div
-        className={`chart-embedded w-full ${
-          fillHeight
-            ? "h-[280px] md:h-[320px] 2xl:h-[360px]"
-            : "h-[280px] md:h-[320px] 2xl:h-[360px]"
-        }`}
-      >
-        <ResponsiveContainer width="100%" height="100%">
+      <ChartViewport>
+        {({ yAxisWidth, tickFontSize }) => (
           <BarChart
             data={data}
             layout="vertical"
@@ -98,15 +92,18 @@ export function AnomalyTypeChart({
             />
             <XAxis
               type="number"
-              tick={chartAxisTick}
+              tick={{ ...chartAxisTick, fontSize: tickFontSize(11, 8) }}
               axisLine={chartAxisLine}
               tickLine={{ stroke: chartTickLineStroke }}
             />
             <YAxis
               type="category"
               dataKey="type"
-              width={132}
-              tick={chartAxisTickEmphasis}
+              width={yAxisWidth(132, 80)}
+              tick={{
+                ...chartAxisTickEmphasis,
+                fontSize: tickFontSize(11, 9),
+              }}
               axisLine={chartAxisLine}
               tickLine={false}
               interval={0}
@@ -124,15 +121,12 @@ export function AnomalyTypeChart({
               activeBar={chartActiveBar}
             >
               {data.map((entry, index) => (
-                <Cell
-                  key={entry.key}
-                  fill={chartBarCellFill(index)}
-                />
+                <Cell key={entry.key} fill={chartBarCellFill(index)} />
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
-      </div>
+        )}
+      </ChartViewport>
     </Card>
   );
 }

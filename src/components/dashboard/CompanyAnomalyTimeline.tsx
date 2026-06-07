@@ -6,13 +6,13 @@ import {
   CartesianGrid,
   ComposedChart,
   Line,
-  ResponsiveContainer,
   Scatter,
   Tooltip,
   XAxis,
   YAxis,
   ZAxis,
 } from "recharts";
+import { ChartViewport } from "@/components/charts/ChartViewport";
 import { Card } from "@/components/ui/Card";
 import { ChartRechartsDefs } from "@/components/dashboard/ChartRechartsDefs";
 import type { AnomalyRecord, AnomalySeverity } from "@/lib/types";
@@ -128,16 +128,12 @@ export function CompanyAnomalyTimeline({
     );
   };
 
-  const chartHeightClass = fillHeight
-    ? "min-h-[280px] md:min-h-[320px] 2xl:min-h-[360px]"
-    : "h-[280px] md:h-[320px] 2xl:h-[360px]";
-
   return (
     <Card
       title={`${formatTicker(ticker) || "—"} Anomaly Timeline`}
       subtitle="Anomaly score over time · click a point to select for AI briefing · lower = higher risk"
       fillHeight={fillHeight}
-      className={fillHeight ? "h-full w-full" : "w-full"}
+      className={`chart-card ${fillHeight ? "h-full w-full" : "w-full"}`}
     >
       {loading && (
         <p className="text-sm text-[var(--text-muted)]">Loading anomaly history…</p>
@@ -150,8 +146,15 @@ export function CompanyAnomalyTimeline({
       )}
       {!loading && points.length > 0 && (
         <div className={fillHeight ? "flex min-h-0 flex-1 flex-col" : ""}>
-          <div className={`chart-embedded w-full flex-1 ${chartHeightClass}`}>
-            <ResponsiveContainer width="100%" height="100%">
+          <ChartViewport
+            className={fillHeight ? "flex-1" : ""}
+            desktopClassName={
+              fillHeight
+                ? "min-h-[280px] md:min-h-[320px] 2xl:min-h-[360px]"
+                : undefined
+            }
+          >
+            {({ tickFontSize }) => (
               <ComposedChart
                 data={points}
                 margin={{ top: 8, right: 12, left: 0, bottom: 4 }}
@@ -164,14 +167,14 @@ export function CompanyAnomalyTimeline({
                 />
                 <XAxis
                   dataKey="date"
-                  tick={{ ...chartAxisTick, fontSize: 10 }}
+                  tick={{ ...chartAxisTick, fontSize: tickFontSize(10, 8) }}
                   axisLine={chartAxisLine}
                   tickLine={{ stroke: chartTickLineStroke }}
                   interval="preserveStartEnd"
                 />
                 <YAxis
                   dataKey="score"
-                  tick={chartAxisTick}
+                  tick={{ ...chartAxisTick, fontSize: tickFontSize(11, 8) }}
                   axisLine={chartAxisLine}
                   tickLine={{ stroke: chartTickLineStroke }}
                   tickFormatter={(v) => Number(v).toFixed(3)}
@@ -218,8 +221,8 @@ export function CompanyAnomalyTimeline({
                   }}
                 />
               </ComposedChart>
-            </ResponsiveContainer>
-          </div>
+            )}
+          </ChartViewport>
           <div className="mt-3 flex shrink-0 flex-wrap gap-3 text-[10px] text-[var(--text-muted)]">
             {(
               [

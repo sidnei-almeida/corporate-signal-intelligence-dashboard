@@ -43,7 +43,7 @@ export function CompanyIdentity({
       className={`company-identity company-identity--${size} ${className}`.trim()}
     >
       {showLogoCard ? (
-        <div className="company-logo-card" aria-hidden>
+        <div className="company-logo-card ticker-logo company-logo" aria-hidden>
           {logo}
         </div>
       ) : (
@@ -51,7 +51,7 @@ export function CompanyIdentity({
       )}
       <div className="company-identity-body min-w-0">
         <div className="company-identity-primary">
-          <span className={tickerClass}>{formatTicker(ticker)}</span>
+          <span className={`ticker-name company-name ${tickerClass}`}>{formatTicker(ticker)}</span>
           {trailing}
         </div>
         {name ? (

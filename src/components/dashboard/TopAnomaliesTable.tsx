@@ -1,5 +1,6 @@
 "use client";
 
+import { MobileAnomalyEventList } from "@/components/dashboard/MobileAnomalyEventList";
 import { CompanyTickerCell } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
@@ -43,9 +44,10 @@ export function TopAnomaliesTable({
     <Card
       title="Top Anomaly Events"
       subtitle="Critical signals across the universe · click a row for details and AI briefing"
-      className="w-full overflow-hidden"
+      className="anomaly-table events-table w-full overflow-hidden"
+      data-component="events-table"
     >
-      <div className="-mx-4 max-h-[min(420px,55vh)] overflow-auto px-4 sm:-mx-5 sm:px-5 2xl:-mx-6 2xl:max-h-[480px] 2xl:px-6">
+      <div className="events-table-desktop -mx-4 max-h-[min(420px,55vh)] overflow-auto px-4 sm:-mx-5 sm:px-5 2xl:-mx-6 2xl:max-h-[480px] 2xl:px-6">
         <table className="w-full min-w-[880px] text-left text-xs leading-normal 2xl:text-sm">
           <thead className="sticky top-0 z-10 bg-[var(--bg-surface)]">
             <tr className={`border-b ${CARD_DIVIDER}`}>
@@ -108,6 +110,7 @@ export function TopAnomaliesTable({
           </tbody>
         </table>
       </div>
+      <MobileAnomalyEventList records={sorted} onSelect={onSelect} />
     </Card>
   );
 }

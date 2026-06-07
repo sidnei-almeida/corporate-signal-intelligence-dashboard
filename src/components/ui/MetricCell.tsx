@@ -26,9 +26,9 @@ export function MetricCell({
 
   return (
     <div className={`${METRIC_CELL} px-2.5 py-2 ${className}`}>
-      <dt className={SECTION_LABEL}>{label}</dt>
+      <dt className={`spec-label ${SECTION_LABEL}`}>{label}</dt>
       <dd
-        className={`${valueClass} ${truncate ? "truncate" : ""}`}
+        className={`spec-value ${valueClass} ${truncate ? "truncate" : ""}`}
         title={truncate ? value : undefined}
       >
         {value}

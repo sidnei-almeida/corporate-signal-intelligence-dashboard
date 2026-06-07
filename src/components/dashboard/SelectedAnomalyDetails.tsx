@@ -67,7 +67,7 @@ export function SelectedAnomalyDetails({
         title="Selected Anomaly"
         subtitle="Signal context for the active investigation"
         fillHeight={fillHeight}
-        className={fillHeight ? "h-full w-full" : "w-full"}
+        className={`selected-event event-context ${fillHeight ? "h-full w-full" : "w-full"}`}
       >
         <div
           className={`empty-state ${
@@ -96,7 +96,7 @@ export function SelectedAnomalyDetails({
       title="Selected Anomaly"
       subtitle="Full signal context for investigation"
       fillHeight={fillHeight}
-      className={fillHeight ? "h-full w-full" : "w-full"}
+      className={`selected-event event-context ${fillHeight ? "h-full w-full" : "w-full"}`}
     >
       <div
         className={`flex flex-col gap-5 ${fillHeight ? "min-h-0 flex-1" : ""}`}
@@ -104,17 +104,26 @@ export function SelectedAnomalyDetails({
         <CompanyIdentity
           ticker={String(record.ticker)}
           meta={formatDate(String(record.date))}
+          className="event-header event-row"
           trailing={
             <>
-              <SeverityIndicator severity={severity} compact />
-              <span className={`text-sm ${scoreClass}`}>
+              <SeverityIndicator
+                severity={severity}
+                compact
+                className="event-severity severity-badge"
+              />
+              <span className={`score-value score-block text-sm ${scoreClass}`}>
                 {formatScore(record.anomaly_score)}
               </span>
             </>
           }
         />
 
-        {types.length > 0 && <AnomalyTypeTags types={types} />}
+        {types.length > 0 && (
+          <div className="event-tags signal-tags">
+            <AnomalyTypeTags types={types} />
+          </div>
+        )}
 
         <div className={fillHeight ? "min-h-0 flex-1" : ""}>
           <p className={`${SECTION_LABEL} mb-2`}>Signal metrics</p>

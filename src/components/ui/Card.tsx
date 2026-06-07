@@ -31,11 +31,15 @@ export function Card({
     >
       {(title || subtitle || action) && (
         <header
-          className={`flex shrink-0 items-start justify-between gap-4 px-4 py-4 sm:px-5 2xl:px-6 ${CARD_HEADER_DIVIDER}`}
+          className={`card-header section-header chart-header flex shrink-0 items-start justify-between gap-4 px-4 py-4 sm:px-5 2xl:px-6 ${CARD_HEADER_DIVIDER}`}
         >
           <div className="min-w-0">
-            {title && <h2 className={TYPE_CARD_TITLE}>{title}</h2>}
-            {subtitle && <p className={TYPE_CARD_SUBTITLE}>{subtitle}</p>}
+            {title && (
+              <h2 className={`${TYPE_CARD_TITLE} chart-title section-title`}>{title}</h2>
+            )}
+            {subtitle && (
+              <p className={`${TYPE_CARD_SUBTITLE} chart-subtitle`}>{subtitle}</p>
+            )}
           </div>
           {action}
         </header>
