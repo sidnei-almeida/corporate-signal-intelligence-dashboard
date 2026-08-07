@@ -84,7 +84,7 @@ export function AnomalySummaryTable({
                     {formatAnomalyRate(row.anomaly_rate)}
                   </td>
                   <td className="py-2 pr-3 font-data text-xs">
-                    {formatScore(row.min_score)}
+                    {formatScore(row.max_score)}
                   </td>
                   <td className="py-2 pr-3 font-data text-xs">
                     {formatScore(row.avg_score)}

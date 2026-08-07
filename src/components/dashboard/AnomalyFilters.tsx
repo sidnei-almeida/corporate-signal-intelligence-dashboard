@@ -15,7 +15,7 @@ interface AnomalyFiltersProps {
   onAnomalyTypeChange: (value: string) => void;
 }
 
-const SEVERITIES: AnomalySeverity[] = ["Critical", "High", "Medium", "Low"];
+const SEVERITIES: AnomalySeverity[] = ["critical", "high", "moderate", "watch"];
 
 export function AnomalyFilters({
   tickers,

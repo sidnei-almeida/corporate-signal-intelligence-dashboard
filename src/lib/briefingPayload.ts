@@ -7,15 +7,39 @@ import {
   splitAnomalyTypes,
 } from "@/lib/formatters";
 
-/** Dashboard severity tiers (anomaly_score — lower = higher risk) */
+/**
+ * Severity tiers, expressed as the tightest alert budget a day would still survive.
+ * Higher score = larger deviation, so these are minimums, not maximums.
+ */
 export const ANOMALY_SEVERITY_THRESHOLDS: Record<
   AnomalySeverity,
-  { maxScore: number; description: string }
+  { minScore: number; budgetPct: number; description: string }
 > = {
-  Critical: { maxScore: -0.1, description: "Highest deviation from normal behavior" },
-  High: { maxScore: -0.07, description: "Strong deviation" },
-  Medium: { maxScore: -0.04, description: "Notable deviation" },
-  Low: { maxScore: Infinity, description: "Mild deviation" },
+  critical: {
+    minScore: 10.676,
+    budgetPct: 0.1,
+    description: "Still flagged at a tenth of the standard budget",
+  },
+  high: {
+    minScore: 8.158,
+    budgetPct: 0.25,
+    description: "Still flagged at a quarter of the standard budget",
+  },
+  moderate: {
+    minScore: 6.729,
+    budgetPct: 0.5,
+    description: "Still flagged at half the standard budget",
+  },
+  watch: {
+    minScore: 5.463,
+    budgetPct: 1,
+    description: "Flagged at the standard 1% budget",
+  },
+  "below budget": {
+    minScore: 0,
+    budgetPct: 100,
+    description: "Below the alert threshold",
+  },
 };
 
 export function buildBriefingRecordPayload(

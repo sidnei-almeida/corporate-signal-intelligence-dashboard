@@ -25,7 +25,7 @@ export function normalizeBriefingMarkdown(
 
   let body = briefing.trim();
 
-  if (severity === "Critical" || severity === "High") {
+  if (severity === "critical" || severity === "high") {
     const replacements: [RegExp, string][] = [
       [/\bmoderate severity(?:\s+rating)?\b/gi, `${severity} severity`],
       [/\bmoderate to elevated risk\b/gi, `${severity} risk`],

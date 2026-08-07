@@ -14,10 +14,11 @@ export const SEVERITY_METER_BY_SEVERITY: Record<
   AnomalySeverity,
   SeverityMeterConfig
 > = {
-  Critical: { level: "critical", value: 95, label: "Critical" },
-  High: { level: "high", value: 70, label: "High" },
-  Medium: { level: "medium", value: 45, label: "Medium" },
-  Low: { level: "low", value: 20, label: "Low" },
+  critical: { level: "critical", value: 95, label: "Critical" },
+  high: { level: "high", value: 70, label: "High" },
+  moderate: { level: "medium", value: 45, label: "Moderate" },
+  watch: { level: "low", value: 20, label: "Watch" },
+  "below budget": { level: "low", value: 8, label: "Below budget" },
 };
 
 export const SEVERITY_METER_BY_RISK_TIER: Record<RiskTier, SeverityMeterConfig> =

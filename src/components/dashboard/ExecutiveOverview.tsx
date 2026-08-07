@@ -6,12 +6,14 @@ import {
   IconKpiRisk,
   IconKpiUniverse,
 } from "@/components/icons";
-import type { AnomalySummary, Company, HealthResponse } from "@/lib/types";
-import {
-  formatAnomalyRate,
-  formatTicker,
-  toFiniteNumber,
-} from "@/lib/formatters";
+import type {
+  AlertBudget,
+  AnomalySummary,
+  Company,
+  HealthResponse,
+  ValidationProtocol,
+} from "@/lib/types";
+import { formatAnomalyRate } from "@/lib/formatters";
 import { CARD_SHELL } from "@/lib/cardVisuals";
 import { TYPE_LABEL, TYPE_METRIC } from "@/lib/typography";
 
@@ -19,6 +21,8 @@ interface ExecutiveOverviewProps {
   companies: Company[];
   summaries: AnomalySummary[];
   health: HealthResponse | null;
+  protocol?: ValidationProtocol | null;
+  budget?: AlertBudget | null;
 }
 
 function KpiCard({
@@ -52,22 +56,18 @@ export function ExecutiveOverview({
   companies,
   summaries,
   health,
+  protocol,
+  budget,
 }: ExecutiveOverviewProps) {
   const monitored = companies.length;
-  const totalAnomalies = summaries.reduce((acc, s) => acc + s.anomalies, 0);
-  const avgRate =
-    summaries.length > 0
-      ? summaries.reduce(
-          (acc, s) => acc + (toFiniteNumber(s.anomaly_rate) ?? 0),
-          0,
-        ) / summaries.length
-      : 0;
+  const totalAlerts = summaries.reduce((acc, s) => acc + s.anomalies, 0);
 
-  const highestRisk = [...summaries].sort(
-    (a, b) =>
-      (toFiniteNumber(b.anomaly_rate) ?? 0) -
-      (toFiniteNumber(a.anomaly_rate) ?? 0),
-  )[0];
+  // The headline is what the queue buys over inspecting at random. Every other number
+  // here is context for it.
+  const precision = protocol?.primary_score?.precision_at_budget;
+  const lift = protocol?.primary_score?.precision_lift_over_base_rate;
+  const baseRate = protocol?.base_rate;
+  const perYear = budget?.alerts_per_year ?? protocol?.alerts?.per_year;
 
   return (
     <section
@@ -75,36 +75,44 @@ export function ExecutiveOverview({
       data-component="stat-cards"
     >
       <KpiCard
-        label="Monitored Companies"
-        value={String(monitored)}
-        hint="Public issuers in watchlist"
-        icon={IconKpiUniverse}
-      />
-      <KpiCard
-        label="Total Anomalies"
-        value={totalAnomalies.toLocaleString()}
-        hint="Flagged issuer-period events"
-        icon={IconKpiAnomalies}
-      />
-      <KpiCard
-        label="Avg Anomaly Rate"
-        value={formatAnomalyRate(avgRate)}
-        hint="Across monitored universe"
+        label="Precision Gain"
+        value={lift !== undefined && lift !== null ? `${lift.toFixed(1)}×` : "—"}
+        hint={
+          precision !== undefined && baseRate !== undefined
+            ? `${formatAnomalyRate(precision)} hit rate vs ${formatAnomalyRate(baseRate)} at random`
+            : "Versus random inspection"
+        }
         icon={IconKpiRate}
       />
       <KpiCard
-        label="Highest Risk Ticker"
-        value={highestRisk ? formatTicker(highestRisk.ticker) : "—"}
+        label="Alert Budget"
+        value={budget ? `${budget.budget_pct}%` : "1%"}
         hint={
-          highestRisk
-            ? `${formatAnomalyRate(highestRisk.anomaly_rate)} anomaly rate`
-            : undefined
+          perYear
+            ? `≈${perYear} alerts a year across the book`
+            : "Share of issuer-days that may alert"
         }
         icon={IconKpiRisk}
       />
       <KpiCard
-        label="Model Availability"
-        value={health?.model_available ? "Online" : "Offline"}
+        label="Alerts Raised"
+        value={totalAlerts.toLocaleString()}
+        hint={
+          protocol?.test_window
+            ? `Since ${protocol.test_window[0].slice(0, 4)}`
+            : "Flagged issuer-days"
+        }
+        icon={IconKpiAnomalies}
+      />
+      <KpiCard
+        label="Monitored Issuers"
+        value={String(monitored)}
+        hint="Alert rate is issuer-relative, so these do not rank"
+        icon={IconKpiUniverse}
+      />
+      <KpiCard
+        label="Pipeline"
+        value={health?.status === "ok" ? "Online" : "Offline"}
         hint={health?.data_source ? `Data: ${health.data_source}` : undefined}
         icon={IconKpiModel}
       />

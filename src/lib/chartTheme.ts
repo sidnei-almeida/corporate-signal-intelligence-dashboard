@@ -122,10 +122,11 @@ export const chartActiveDot = {
 
 /** Severity scatter/legend — aligned with risk meter palette */
 export const chartSeverityFill: Record<AnomalySeverity, string> = {
-  Critical: "#a85834",
-  High: "#b5763a",
-  Medium: "#8a7a52",
-  Low: "#646c78",
+  critical: "#a85834",
+  high: "#b5763a",
+  moderate: "#8a7a52",
+  watch: "#646c78",
+  "below budget": "#4a5058",
 };
 
 export const chartSeverityLegend = chartSeverityFill;

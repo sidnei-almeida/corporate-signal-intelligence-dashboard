@@ -58,7 +58,7 @@ export function TopAnomaliesTable({
               <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pr-4 pt-1">Type</th>
               <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pr-4 pt-1">Return</th>
               <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pr-4 pt-1">Vol Z</th>
-              <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pt-1">Filings 30d</th>
+              <th className="table-head-cell bg-[var(--bg-surface)] pb-3 pt-1">Range Z</th>
             </tr>
           </thead>
           <tbody>
@@ -96,13 +96,13 @@ export function TopAnomaliesTable({
                     />
                   </td>
                   <td className="py-2.5 pr-4 text-[var(--text-secondary)]">
-                    {formatPercent(record.daily_return)}
+                    {formatPercent(record.log_return)}
                   </td>
                   <td className="py-2.5 pr-4 font-data text-[var(--text-secondary)]">
-                    {formatNumber(record.volume_zscore_30d, 2)}
+                    {formatNumber(record.volume_zscore_21d, 2)}
                   </td>
                   <td className="py-2.5 font-data text-[var(--text-secondary)]">
-                    {formatNumber(record.filing_count_30d, 0)}
+                    {formatNumber(record.range_zscore_21d, 2)}
                   </td>
                 </tr>
               );

@@ -74,7 +74,7 @@ export function MonitoredUniverseRanking({
                     {formatAnomalyRate(row.anomaly_rate)}
                   </td>
                   <td className="py-2 pr-3 font-data">{row.anomalies}</td>
-                  <td className="py-2 pr-3 font-data">{formatScore(row.min_score)}</td>
+                  <td className="py-2 pr-3 font-data">{formatScore(row.avg_score)}</td>
                   <td className="py-2 pr-3 font-data">{formatScore(row.avg_score)}</td>
                   <td className="py-2 font-data">{formatScore(row.max_score)}</td>
                 </tr>

@@ -21,6 +21,8 @@ import {
   formatScore,
   formatTicker,
   getAnomalySeverity,
+  hasDisclosure,
+  severityOf,
   splitAnomalyTypes,
   toFiniteNumber,
 } from "@/lib/formatters";
@@ -39,22 +41,21 @@ const METRICS: {
   percent?: boolean;
   decimals?: number;
 }[] = [
-  { key: "daily_return", label: "Daily Return", percent: true },
-  { key: "volume_zscore_30d", label: "Volume Z", mono: true, decimals: 2 },
-  { key: "return_zscore_30d", label: "Return Z", mono: true, decimals: 2 },
-  { key: "volatility_30d", label: "Volatility 30D", mono: true, decimals: 4 },
-  { key: "filing_count_30d", label: "Filings 30D", mono: true, decimals: 0 },
-  { key: "form_8k_count_30d", label: "8-K Filings 30D", mono: true, decimals: 0 },
-  { key: "revenue_growth_qoq", label: "Revenue QoQ", percent: true },
-  { key: "net_margin", label: "Net Margin", percent: true },
-  { key: "operating_margin", label: "Operating Margin", percent: true },
+  { key: "return_zscore_21d", label: "Return Z (21d)", mono: true, decimals: 2 },
+  { key: "volume_zscore_21d", label: "Volume Z (21d)", mono: true, decimals: 2 },
+  { key: "range_zscore_21d", label: "Range Z (21d)", mono: true, decimals: 2 },
+  { key: "log_return", label: "Log Return", percent: true },
+  { key: "realised_volatility_21d", label: "Realised Vol (21d)", mono: true, decimals: 4 },
+  { key: "market_return", label: "Market Return", percent: true },
+  { key: "idiosyncratic_zscore", label: "Idiosyncratic Z", mono: true, decimals: 2 },
+  { key: "days_since_8k", label: "Days Since 8-K", mono: true, decimals: 0 },
 ];
 
 type SignalStrength = {
   marketReaction: "Strong" | "Moderate" | "Low";
   volumeSignal: "Elevated" | "Normal";
-  filingActivity: "Elevated" | "Minimal";
-  financialShift: "Positive" | "Negative" | "Neutral";
+  rangeSignal: "Elevated" | "Normal";
+  disclosure: "Within ±2 sessions" | "None nearby";
   compositeRisk: AnomalySeverity;
 };
 
@@ -68,12 +69,10 @@ function metricValue(
 }
 
 function deriveSignalStrength(record: AnomalyRecord): SignalStrength {
-  const dailyReturn = toFiniteNumber(record.daily_return);
-  const returnZ = toFiniteNumber(record.return_zscore_30d);
-  const volumeZ = toFiniteNumber(record.volume_zscore_30d);
-  const filings = toFiniteNumber(record.filing_count_30d);
-  const revenueGrowth = toFiniteNumber(record.revenue_growth_qoq);
-  const netMargin = toFiniteNumber(record.net_margin);
+  const dailyReturn = toFiniteNumber(record.log_return);
+  const returnZ = toFiniteNumber(record.return_zscore_21d);
+  const volumeZ = toFiniteNumber(record.volume_zscore_21d);
+  const rangeZ = toFiniteNumber(record.range_zscore_21d);
 
   const absReturn = dailyReturn !== undefined ? Math.abs(dailyReturn) : 0;
   const absReturnZ = returnZ !== undefined ? Math.abs(returnZ) : 0;
@@ -88,33 +87,24 @@ function deriveSignalStrength(record: AnomalyRecord): SignalStrength {
   const volumeSignal: SignalStrength["volumeSignal"] =
     volumeZ !== undefined && Math.abs(volumeZ) >= 2 ? "Elevated" : "Normal";
 
-  const filingActivity: SignalStrength["filingActivity"] =
-    filings !== undefined && filings >= 2 ? "Elevated" : "Minimal";
+  const rangeSignal: SignalStrength["rangeSignal"] =
+    rangeZ !== undefined && Math.abs(rangeZ) >= 2 ? "Elevated" : "Normal";
 
-  let financialShift: SignalStrength["financialShift"] = "Neutral";
-  if (revenueGrowth !== undefined && netMargin !== undefined) {
-    if (revenueGrowth > 0 && netMargin > 0) {
-      financialShift = "Positive";
-    } else if (revenueGrowth < 0 || netMargin < 0) {
-      financialShift = "Negative";
-    }
-  } else if (revenueGrowth !== undefined) {
-    financialShift = revenueGrowth > 0 ? "Positive" : revenueGrowth < 0 ? "Negative" : "Neutral";
-  } else if (netMargin !== undefined) {
-    financialShift = netMargin > 0 ? "Positive" : netMargin < 0 ? "Negative" : "Neutral";
-  }
+  const disclosure: SignalStrength["disclosure"] = hasDisclosure(record)
+    ? "Within ±2 sessions"
+    : "None nearby";
 
   return {
     marketReaction,
     volumeSignal,
-    filingActivity,
-    financialShift,
-    compositeRisk: getAnomalySeverity(record.anomaly_score),
+    rangeSignal,
+    disclosure,
+    compositeRisk: severityOf(record),
   };
 }
 
 function SignalStrengthRow({ label, value }: { label: string; value: string }) {
-  const severityValues: AnomalySeverity[] = ["Critical", "High", "Medium", "Low"];
+  const severityValues: AnomalySeverity[] = ["critical", "high", "moderate", "watch"];
   const isCompositeRisk = label === "Composite Risk";
   const showSeverity =
     isCompositeRisk && severityValues.includes(value as AnomalySeverity);
@@ -136,8 +126,8 @@ function SignalStrengthSection({ record }: { record: AnomalyRecord }) {
   const rows: { label: string; value: string }[] = [
     { label: "Market Reaction", value: strength.marketReaction },
     { label: "Volume Signal", value: strength.volumeSignal },
-    { label: "Filing Activity", value: strength.filingActivity },
-    { label: "Financial Shift", value: strength.financialShift },
+    { label: "Range Expansion", value: strength.rangeSignal },
+    { label: "Filing Nearby", value: strength.disclosure },
     { label: "Composite Risk", value: strength.compositeRisk },
   ];
 

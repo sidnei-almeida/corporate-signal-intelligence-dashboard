@@ -93,9 +93,9 @@ export function TopCompanyEvents({
                       </div>
                     )}
                     <div className="mt-2 flex flex-wrap gap-3 text-xs text-[var(--text-muted)] 2xl:text-sm">
-                      <span>Return {formatPercent(record.daily_return)}</span>
-                      <span>Vol Z {formatNumber(record.volume_zscore_30d, 2)}</span>
-                      <span>Filings {formatNumber(record.filing_count_30d, 0)}</span>
+                      <span>Return {formatPercent(record.log_return)}</span>
+                      <span>Vol Z {formatNumber(record.volume_zscore_21d, 2)}</span>
+                      <span>Range Z {formatNumber(record.range_zscore_21d, 2)}</span>
                     </div>
                   </button>
                 </li>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AlertBudgetControl } from "@/components/dashboard/AlertBudgetControl";
 import { AnomalyFilters } from "@/components/dashboard/AnomalyFilters";
 import { AnomalyTypeChart } from "@/components/dashboard/AnomalyTypeChart";
 import { CompanyAnomalyTimeline } from "@/components/dashboard/CompanyAnomalyTimeline";
@@ -14,8 +15,18 @@ import type { AnomalyRecord } from "@/lib/types";
 import { formatTicker } from "@/lib/formatters";
 
 export default function AnomaliesPage() {
-  const { loading, error, records, anomalyTypes, companies, refresh } =
-    useAnomaliesData(50);
+  const {
+    loading,
+    queueLoading,
+    error,
+    records,
+    anomalyTypes,
+    companies,
+    budget,
+    budgetPct,
+    changeBudget,
+    refresh,
+  } = useAnomaliesData(200);
 
   const [tickerFilter, setTickerFilter] = useState("");
   const [severityFilter, setSeverityFilter] = useState("");
@@ -66,6 +77,13 @@ export default function AnomaliesPage() {
 
   return (
     <div className="dashboard-page-content flex w-full max-w-none flex-col gap-4 2xl:gap-5">
+      <AlertBudgetControl
+        budgetPct={budgetPct}
+        budget={budget}
+        onChange={(pct) => void changeBudget(pct)}
+        disabled={queueLoading}
+      />
+
       <AnomalyFilters
         tickers={tickers.length > 0 ? tickers : companies.map((c) => c.ticker)}
         ticker={tickerFilter}

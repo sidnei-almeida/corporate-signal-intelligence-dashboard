@@ -55,6 +55,6 @@ export function metricValueClass(
   options?: { positive?: boolean },
 ): string {
   if (options?.positive) return VALUE_POSITIVE;
-  if (severity === "Critical") return VALUE_CRITICAL;
+  if (severity === "critical") return VALUE_CRITICAL;
   return VALUE_KPI;
 }

@@ -80,7 +80,7 @@ export function TickerAnomalyPanel({
                   </div>
                   <p className="mt-1 text-xs text-[var(--text-muted)]">
                     {formatAnomalyTypeLabel(primaryAnomalyType(record.anomaly_type))} ·{" "}
-                    {formatPercent(record.daily_return)} return
+                    {formatPercent(record.log_return)} return
                   </p>
                 </button>
               </li>

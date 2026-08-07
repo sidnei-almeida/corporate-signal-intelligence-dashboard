@@ -78,7 +78,7 @@ export function CompanySignalBreakdown({
   const insights = useMemo(() => {
     const dominant = typeCounts[0];
     const criticalCount = anomalyRecords.filter(
-      (r) => getAnomalySeverity(r.anomaly_score) === "Critical",
+      (r) => getAnomalySeverity(r.anomaly_score) === "critical",
     ).length;
 
     const latest = [...anomalyRecords].sort((a, b) => {

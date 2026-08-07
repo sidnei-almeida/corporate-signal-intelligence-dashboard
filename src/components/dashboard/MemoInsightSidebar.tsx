@@ -14,7 +14,8 @@ import {
   formatNumber,
   formatPercent,
   formatScore,
-  getAnomalySeverity,
+  hasDisclosure,
+  severityOf,
 } from "@/lib/formatters";
 
 interface MemoInsightSidebarProps {
@@ -44,22 +45,22 @@ function InsightSection({
 }
 
 export function MemoInsightSidebar({ record }: MemoInsightSidebarProps) {
-  const severity = getAnomalySeverity(record.anomaly_score);
-  const filings = formatNumber(record.filing_count_30d, 0);
-  const volZ = formatNumber(record.volume_zscore_30d, 2);
+  const severity = severityOf(record);
+  const nearDisclosure = hasDisclosure(record);
+  const volZ = formatNumber(record.volume_zscore_21d, 2);
   const scoreClass = metricValueClass(severity);
 
   const riskText =
-    severity === "Critical"
+    severity === "critical"
       ? "Composite anomaly score indicates a high-priority deviation from recent issuer behavior. Treat as an immediate monitoring event."
-      : severity === "High"
+      : severity === "high"
         ? "Elevated signal strength warrants close review of market, filing, and financial drivers over the next several sessions."
         : "Moderate deviation detected. Continue monitoring for persistence or escalation in related signal types.";
 
   const monitoring = [
     "Price and volume follow-through over the next 5 sessions",
-    filings !== "—" && Number(record.filing_count_30d) >= 2
-      ? "SEC filing cadence and 8-K disclosures"
+    nearDisclosure
+      ? "The filing that landed inside the two-session window"
       : null,
     "Peer-relative return and volatility drift",
     "Upcoming earnings and guidance commentary",
@@ -105,15 +106,15 @@ export function MemoInsightSidebar({ record }: MemoInsightSidebarProps) {
           </div>
           <div className="flex items-baseline justify-between gap-3">
             <dt className={SECTION_LABEL}>Return</dt>
-            <dd className={SECTION_VALUE}>{formatPercent(record.daily_return)}</dd>
+            <dd className={SECTION_VALUE}>{formatPercent(record.log_return)}</dd>
           </div>
           <div className="flex items-baseline justify-between gap-3">
             <dt className={SECTION_LABEL}>Vol Z</dt>
             <dd className={TYPE_DATA_ACCENT}>{volZ}</dd>
           </div>
           <div className="flex items-baseline justify-between gap-3">
-            <dt className={SECTION_LABEL}>Filings</dt>
-            <dd className={SECTION_VALUE}>{filings}</dd>
+            <dt className={SECTION_LABEL}>Filing ±2d</dt>
+            <dd className={SECTION_VALUE}>{nearDisclosure ? "Yes" : "No"}</dd>
           </div>
         </dl>
       </InsightSection>

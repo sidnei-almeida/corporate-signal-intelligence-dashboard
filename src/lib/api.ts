@@ -1,4 +1,5 @@
 import type {
+  AlertBudget,
   AnomalyListResponse,
   AnomalyRecord,
   AnomalySummary,
@@ -7,8 +8,14 @@ import type {
   BriefingResponse,
   Company,
   CompanyProfile,
+  DetectorMetric,
   HealthResponse,
   ModelInfo,
+  RegimeBehaviour,
+  ShapAttribution,
+  ValidationProtocol,
+  ValidationTableResponse,
+  WalkForwardYear,
 } from "./types";
 import {
   buildBriefingCompanyContext,
@@ -85,6 +92,69 @@ export function getCompanyProfile(ticker: string): Promise<CompanyProfile> {
 
 export function getTopAnomalies(limit = 20): Promise<AnomalyListResponse> {
   return apiFetch<AnomalyListResponse>(`/anomalies/top?limit=${limit}`);
+}
+
+/**
+ * The alert queue at a given budget.
+ *
+ * The budget is the operating control: it says what share of issuer-days may raise an
+ * alert, and the score threshold follows from it. Ten issuers at 1% is roughly twenty
+ * alerts a year for the whole book.
+ */
+export function getAlertQueue(
+  options: { budgetPct?: number; ticker?: string; limit?: number } = {},
+): Promise<AnomalyListResponse> {
+  const { budgetPct = 1, ticker, limit = 100 } = options;
+  const params = new URLSearchParams({
+    budget_pct: String(budgetPct),
+    limit: String(limit),
+  });
+  if (ticker) params.set("ticker", ticker.trim().toUpperCase());
+  return apiFetch<AnomalyListResponse>(`/anomalies/queue?${params}`);
+}
+
+/** Threshold and alert volume a budget implies, without fetching the rows. */
+export function getAlertBudget(budgetPct = 1): Promise<AlertBudget> {
+  return apiFetch<AlertBudget>(`/anomalies/budget?budget_pct=${budgetPct}`);
+}
+
+// --- Validation protocol ---------------------------------------------------------
+
+export function getValidationProtocol(): Promise<ValidationProtocol> {
+  return apiFetch<ValidationProtocol>("/validation/protocol");
+}
+
+export function getDetectorBenchmark(): Promise<
+  ValidationTableResponse<DetectorMetric>
+> {
+  return apiFetch<ValidationTableResponse<DetectorMetric>>("/validation/detectors");
+}
+
+export function getWalkForward(): Promise<ValidationTableResponse<WalkForwardYear>> {
+  return apiFetch<ValidationTableResponse<WalkForwardYear>>("/validation/walk-forward");
+}
+
+export function getAttribution(): Promise<{
+  features: ShapAttribution[];
+  drivers: { driver: string; share_pct: number }[];
+}> {
+  return apiFetch("/validation/attribution");
+}
+
+export function getRegimeBehaviour(): Promise<
+  ValidationTableResponse<RegimeBehaviour>
+> {
+  return apiFetch<ValidationTableResponse<RegimeBehaviour>>(
+    "/validation/regime_behaviour",
+  );
+}
+
+export function getValidationArtifact<T>(
+  name: string,
+): Promise<ValidationTableResponse<T>> {
+  return apiFetch<ValidationTableResponse<T>>(
+    `/validation/${encodeURIComponent(name)}`,
+  );
 }
 
 export function getAnomalySummary(): Promise<AnomalySummary[]> {

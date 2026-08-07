@@ -226,10 +226,10 @@ export function CompanyAnomalyTimeline({
           <div className="mt-3 flex shrink-0 flex-wrap gap-3 text-[10px] text-[var(--text-muted)]">
             {(
               [
-                ["Critical", chartSeverityLegend.Critical],
-                ["High", chartSeverityLegend.High],
-                ["Medium", chartSeverityLegend.Medium],
-                ["Low", chartSeverityLegend.Low],
+                ["Critical", chartSeverityLegend.critical],
+                ["High", chartSeverityLegend.high],
+                ["Moderate", chartSeverityLegend.moderate],
+                ["Watch", chartSeverityLegend.watch],
               ] as const
             ).map(([label, color]) => (
               <span key={label} className="flex items-center gap-1.5">

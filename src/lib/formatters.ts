@@ -49,27 +49,99 @@ export function formatDate(value: string | null | undefined): string {
   });
 }
 
+/** The conditional score is a number of standard deviations, so it reads in sigma. */
 export function formatScore(value: NumericInput): string {
   const n = toFiniteNumber(value);
   if (n === undefined) {
     return "—";
   }
-  return n.toFixed(4);
+  return n.toFixed(2);
+}
+
+export function formatSigma(value: NumericInput): string {
+  const n = toFiniteNumber(value);
+  if (n === undefined) return "—";
+  return `${n >= 0 ? "+" : ""}${n.toFixed(2)}σ`;
 }
 
 export function formatTicker(value: string | null | undefined): string {
   return (value ?? "").trim().toUpperCase();
 }
 
+/**
+ * Score cutoffs per severity tier, as served by the API.
+ *
+ * These are quantiles of the conditional score, not fixed constants: "critical" is the
+ * 0.1% budget cutoff, "high" the 0.25%, "moderate" the 0.5% and "watch" the 1%. The
+ * defaults below match the shipped panel and are only a fallback — prefer the `severity`
+ * field the API attaches to every record.
+ */
+export const SEVERITY_THRESHOLDS: [AnomalySeverity, number][] = [
+  ["critical", 10.676],
+  ["high", 8.158],
+  ["moderate", 6.729],
+  ["watch", 5.463],
+];
+
 export function getAnomalySeverity(score: NumericInput): AnomalySeverity {
   const n = toFiniteNumber(score);
   if (n === undefined) {
-    return "Low";
+    return "below budget";
   }
-  if (n <= -0.1) return "Critical";
-  if (n <= -0.07) return "High";
-  if (n <= -0.04) return "Medium";
-  return "Low";
+  for (const [tier, threshold] of SEVERITY_THRESHOLDS) {
+    if (n >= threshold) return tier;
+  }
+  return "below budget";
+}
+
+/** Prefer the tier the API computed; fall back to the local cutoffs. */
+export function severityOf(record: AnomalyRecord): AnomalySeverity {
+  return (record.severity as AnomalySeverity) ?? getAnomalySeverity(record.anomaly_score);
+}
+
+export const SEVERITY_LABELS: Record<AnomalySeverity, string> = {
+  critical: "Critical",
+  high: "High",
+  moderate: "Moderate",
+  watch: "Watch",
+  "below budget": "Below budget",
+};
+
+export function formatSeverity(severity: AnomalySeverity | null | undefined): string {
+  return severity ? (SEVERITY_LABELS[severity] ?? severity) : "—";
+}
+
+/**
+ * Which of the three conditional deviations produced the score. The largest absolute
+ * value *is* the score, so this is the reason the day was flagged rather than a guess.
+ */
+export const DEVIATION_FIELDS = [
+  ["return_zscore_21d", "Price move"],
+  ["volume_zscore_21d", "Volume spike"],
+  ["range_zscore_21d", "Range expansion"],
+] as const;
+
+export function dominantDeviation(
+  record: AnomalyRecord,
+): { field: string; label: string; value: number } | null {
+  let best: { field: string; label: string; value: number } | null = null;
+  for (const [field, label] of DEVIATION_FIELDS) {
+    const value = toFiniteNumber(record[field] as NumericInput);
+    if (value === undefined) continue;
+    if (!best || Math.abs(value) > Math.abs(best.value)) {
+      best = { field, label, value };
+    }
+  }
+  return best;
+}
+
+/** True when a filing landed inside the two-session reaction window. */
+export function hasDisclosure(record: AnomalyRecord): boolean {
+  return (
+    (toFiniteNumber(record.filed_8k_2d) ?? 0) > 0 ||
+    (toFiniteNumber(record.filed_10q_2d) ?? 0) > 0 ||
+    (toFiniteNumber(record.filed_10k_2d) ?? 0) > 0
+  );
 }
 
 export function formatAnomalyTypeLabel(type: string): string {
@@ -92,12 +164,14 @@ export function formatAnomalyRate(rate: NumericInput): string {
   return `${(n * 100).toFixed(2)}%`;
 }
 
+/**
+ * The pipeline emits one label per alert ("range expansion with disclosure"), not the
+ * comma-joined lists the earlier rule-based version produced. Kept as an array for the
+ * call sites that map over it.
+ */
 export function splitAnomalyTypes(type: string | null | undefined): string[] {
-  if (!type) return [];
-  return type
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
+  const label = type?.trim();
+  return label && label !== "normal" ? [label] : [];
 }
 
 export function primaryAnomalyType(type: string | null | undefined): string {
@@ -158,5 +232,5 @@ export function countAnomalyTypesByRecord(
 }
 
 export function severityChartFill(severity: AnomalySeverity): string {
-  return chartSeverityFill[severity] ?? chartSeverityFill.Low;
+  return chartSeverityFill[severity] ?? chartSeverityFill["below budget"];
 }

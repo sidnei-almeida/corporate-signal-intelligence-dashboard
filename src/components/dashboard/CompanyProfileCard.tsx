@@ -1,10 +1,9 @@
 import { CompanyIdentity } from "@/components/company-icons";
 import { Card } from "@/components/ui/Card";
 import { MetricCell } from "@/components/ui/MetricCell";
-import { RiskTierIndicator } from "@/components/ui/RiskTierIndicator";
+import { SeverityIndicator } from "@/components/ui/SeverityIndicator";
 import { AnomalyTypeTags } from "@/components/ui/AnomalyTypeTags";
 import { METRIC_CELL, SECTION_LABEL, metricValueClass } from "@/lib/cardVisuals";
-import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { AnomalyRecord, AnomalySummary, CompanyProfile } from "@/lib/types";
 import {
   formatAnomalyRate,
@@ -12,8 +11,7 @@ import {
   formatScore,
   formatTicker,
   getAnomalySeverity,
-  getCompanyRiskRank,
-  getRiskTier,
+  severityOf,
   splitAnomalyTypes,
   toFiniteNumber,
 } from "@/lib/formatters";
@@ -62,19 +60,19 @@ export function CompanyProfileCard({
     );
   }
 
-  const tier = getRiskTier(profile.anomaly_rate);
-  const rank = getCompanyRiskRank(summaries, profile.ticker);
   const summaryRow = summaries.find(
     (s) => formatTicker(s.ticker) === formatTicker(profile.ticker),
   );
-  const minScore =
-    summaryRow?.min_score ??
+
+  // Peak deviation, not minimum: a larger conditional score is a larger deviation.
+  const peakScore =
+    summaryRow?.max_score ??
     tickerAnomalies.reduce<AnomalyRecord | null>((best, r) => {
       const score = toFiniteNumber(r.anomaly_score);
       const bestScore = best ? toFiniteNumber(best.anomaly_score) : undefined;
       if (score === undefined) return best;
       if (bestScore === undefined) return r;
-      return score < bestScore ? r : best;
+      return score > bestScore ? r : best;
     }, null)?.anomaly_score;
 
   const mostSevereDate = tickerAnomalies.length
@@ -82,14 +80,15 @@ export function CompanyProfileCard({
         .filter((r) => r.is_anomaly !== false)
         .sort(
           (a, b) =>
-            (toFiniteNumber(a.anomaly_score) ?? 0) -
-            (toFiniteNumber(b.anomaly_score) ?? 0),
+            (toFiniteNumber(b.anomaly_score) ?? 0) -
+            (toFiniteNumber(a.anomaly_score) ?? 0),
         )[0]
     : null;
 
   const latestSeverity = profile.latest_anomaly
-    ? getAnomalySeverity(profile.latest_anomaly.anomaly_score)
+    ? severityOf(profile.latest_anomaly)
     : null;
+  const peakSeverity = getAnomalySeverity(peakScore);
 
   return (
     <Card
@@ -102,16 +101,9 @@ export function CompanyProfileCard({
         <CompanyIdentity
           ticker={profile.ticker}
           name={companyName ?? "Monitored issuer"}
-          meta={`${profile.anomaly_count.toLocaleString()} anomalies · rank ${
-            rank ? `#${rank}` : "—"
-          }`}
+          meta={`${profile.anomaly_count.toLocaleString()} alerts · peak ${formatScore(peakScore)}σ`}
           trailing={
-            <>
-              <RiskTierIndicator tier={tier} suffix="risk" compact />
-              <span className={`text-sm ${TYPE_DATA_ACCENT}`}>
-                {formatAnomalyRate(profile.anomaly_rate)}
-              </span>
-            </>
+            <SeverityIndicator severity={peakSeverity} compact />
           }
         />
 
@@ -120,17 +112,13 @@ export function CompanyProfileCard({
             label="Observations"
             value={profile.row_count.toLocaleString()}
           />
-          <MetricCell label="Anomalies" value={String(profile.anomaly_count)} />
+          <MetricCell label="Alerts" value={String(profile.anomaly_count)} />
           <MetricCell
-            label="Risk rank"
-            value={
-              rank
-                ? `#${rank} of ${summaries.length}`
-                : `— of ${summaries.length}`
-            }
+            label="Alert rate"
+            value={formatAnomalyRate(profile.anomaly_rate)}
             highlight
           />
-          <MetricCell label="Min score" value={formatScore(minScore)} highlight />
+          <MetricCell label="Peak deviation" value={formatScore(peakScore)} highlight />
           <MetricCell
             label="Latest anomaly"
             value={
@@ -144,7 +132,7 @@ export function CompanyProfileCard({
             value={
               mostSevereDate
                 ? formatDate(String(mostSevereDate.date))
-                : formatScore(minScore)
+                : formatScore(peakScore)
             }
           />
         </dl>

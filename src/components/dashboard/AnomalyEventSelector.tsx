@@ -24,7 +24,7 @@ import {
   splitAnomalyTypes,
 } from "@/lib/formatters";
 
-const SEVERITIES: AnomalySeverity[] = ["Critical", "High", "Medium", "Low"];
+const SEVERITIES: AnomalySeverity[] = ["critical", "high", "moderate", "watch"];
 
 interface AnomalyEventSelectorProps {
   companies: Company[];
@@ -169,8 +169,8 @@ export function AnomalyEventSelector({
                       </div>
                     )}
                     <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-[var(--text-muted)]">
-                      <span>Return {formatPercent(record.daily_return)}</span>
-                      <span>Vol Z {formatNumber(record.volume_zscore_30d, 2)}</span>
+                      <span>Return {formatPercent(record.log_return)}</span>
+                      <span>Vol Z {formatNumber(record.volume_zscore_21d, 2)}</span>
                     </div>
                   </button>
                 </li>

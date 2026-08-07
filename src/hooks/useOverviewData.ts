@@ -3,16 +3,20 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ApiError,
+  getAlertBudget,
   getAnomalySummary,
   getAnomalyTypes,
   getCompanies,
   getTopAnomalies,
+  getValidationProtocol,
 } from "@/lib/api";
 import type {
+  AlertBudget,
   AnomalyRecord,
   AnomalySummary,
   AnomalyTypeCount,
   Company,
+  ValidationProtocol,
 } from "@/lib/types";
 
 export function useOverviewData(topLimit = 5) {
@@ -22,6 +26,8 @@ export function useOverviewData(topLimit = 5) {
   const [summaries, setSummaries] = useState<AnomalySummary[]>([]);
   const [anomalyTypes, setAnomalyTypes] = useState<AnomalyTypeCount[]>([]);
   const [topAnomalies, setTopAnomalies] = useState<AnomalyRecord[]>([]);
+  const [protocol, setProtocol] = useState<ValidationProtocol | null>(null);
+  const [budget, setBudget] = useState<AlertBudget | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -37,6 +43,16 @@ export function useOverviewData(topLimit = 5) {
       setSummaries(summaryRes);
       setAnomalyTypes(typesRes);
       setTopAnomalies(topRes.records);
+
+      // The protocol and budget carry the headline numbers. They are fetched separately
+      // and tolerated as missing: a stale deployment without the validation artifacts
+      // should still render the queue rather than fail the whole page.
+      const [protocolRes, budgetRes] = await Promise.allSettled([
+        getValidationProtocol(),
+        getAlertBudget(1),
+      ]);
+      if (protocolRes.status === "fulfilled") setProtocol(protocolRes.value);
+      if (budgetRes.status === "fulfilled") setBudget(budgetRes.value);
     } catch (err) {
       const message =
         err instanceof ApiError
@@ -61,6 +77,8 @@ export function useOverviewData(topLimit = 5) {
     summaries,
     anomalyTypes,
     topAnomalies,
+    protocol,
+    budget,
     refresh,
   };
 }

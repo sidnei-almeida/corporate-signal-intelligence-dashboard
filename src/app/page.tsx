@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ExecutiveOverview } from "@/components/dashboard/ExecutiveOverview";
 import { AnomalyTypeChart } from "@/components/dashboard/AnomalyTypeChart";
-import { CompanyRiskRankingChart } from "@/components/dashboard/CompanyRiskRankingChart";
+import { PrecisionGainPanel } from "@/components/dashboard/PrecisionGainPanel";
 import { ModelStatusCard } from "@/components/dashboard/ModelStatusCard";
 import { TopAnomaliesPreview } from "@/components/dashboard/TopAnomaliesPreview";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -20,6 +20,8 @@ export default function OverviewPage() {
     summaries,
     anomalyTypes,
     topAnomalies,
+    protocol,
+    budget,
     refresh,
   } = useOverviewData(12);
 
@@ -37,6 +39,8 @@ export default function OverviewPage() {
         companies={companies}
         summaries={summaries}
         health={health}
+        protocol={protocol}
+        budget={budget}
       />
 
       <div className="grid w-full grid-cols-2 items-start gap-5 charts-row charts-grid">
@@ -44,7 +48,7 @@ export default function OverviewPage() {
           <AnomalyTypeChart types={anomalyTypes} />
         </div>
         <div className="min-w-0">
-          <CompanyRiskRankingChart summaries={summaries} limit={12} />
+          <PrecisionGainPanel protocol={protocol} />
         </div>
       </div>
 
