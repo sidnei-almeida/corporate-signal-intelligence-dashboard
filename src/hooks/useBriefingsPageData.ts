@@ -3,13 +3,21 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ApiError,
+  getAllAnomalies,
   getCompanies,
   getTickerAnomalies,
-  getTopAnomalies,
 } from "@/lib/api";
 import type { AnomalyRecord, Company } from "@/lib/types";
 
-const TOP_LIMIT = 50;
+/**
+ * The unfiltered list is the whole flagged set, not a ranked head.
+ *
+ * A head of the score ranking is entirely "critical" — the tier cutoffs are quantiles of
+ * the same score — so seeding the list from it made the severity filter look broken:
+ * every tier but critical came back empty until a ticker filter switched the source to
+ * the full per-issuer history.
+ */
+const LIST_LIMIT = 1000;
 
 export function useBriefingsPageData() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -19,9 +27,9 @@ export function useBriefingsPageData() {
   const [error, setError] = useState<string | null>(null);
   const [tickerFilter, setTickerFilter] = useState("");
 
-  const loadTop = useCallback(async () => {
-    const topRes = await getTopAnomalies(TOP_LIMIT);
-    setRecords(topRes.records);
+  const loadAll = useCallback(async () => {
+    const res = await getAllAnomalies(LIST_LIMIT);
+    setRecords(res.records);
   }, []);
 
   const refresh = useCallback(async () => {
@@ -30,7 +38,7 @@ export function useBriefingsPageData() {
     try {
       const companiesRes = await getCompanies();
       setCompanies(companiesRes);
-      await loadTop();
+      await loadAll();
       setTickerFilter("");
     } catch (err) {
       const message =
@@ -41,7 +49,7 @@ export function useBriefingsPageData() {
     } finally {
       setLoading(false);
     }
-  }, [loadTop]);
+  }, [loadAll]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only page bootstrap
@@ -58,8 +66,8 @@ export function useBriefingsPageData() {
       setListLoading(true);
       try {
         if (!tickerFilter) {
-          const topRes = await getTopAnomalies(TOP_LIMIT);
-          if (!cancelled) setRecords(topRes.records);
+          const allRes = await getAllAnomalies(LIST_LIMIT);
+          if (!cancelled) setRecords(allRes.records);
         } else {
           const res = await getTickerAnomalies(tickerFilter);
           if (!cancelled) setRecords(res.records);

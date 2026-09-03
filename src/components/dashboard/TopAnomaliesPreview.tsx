@@ -35,8 +35,8 @@ export function TopAnomaliesPreview({
   const sorted = [...records]
     .sort(
       (a, b) =>
-        (toFiniteNumber(a.anomaly_score) ?? 0) -
-        (toFiniteNumber(b.anomaly_score) ?? 0),
+        (toFiniteNumber(b.anomaly_score) ?? 0) -
+        (toFiniteNumber(a.anomaly_score) ?? 0),
     )
     .slice(0, limit);
 

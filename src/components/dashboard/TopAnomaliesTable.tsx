@@ -23,7 +23,16 @@ interface TopAnomaliesTableProps {
   records: AnomalyRecord[];
   selectedRecord: AnomalyRecord | null;
   onSelect: (record: AnomalyRecord) => void;
+  renderLimit?: number;
 }
+
+/**
+ * A render cap, not a data cap.
+ *
+ * The page holds the whole queue so the ticker and severity filters see every row; only
+ * the number of rows put in the DOM is bounded, and the subtitle says when that bites.
+ */
+const DEFAULT_RENDER_LIMIT = 500;
 
 function rowKey(record: AnomalyRecord, index: number): string {
   return `${record.ticker ?? "x"}-${record.date ?? index}`;
@@ -33,17 +42,23 @@ export function TopAnomaliesTable({
   records,
   selectedRecord,
   onSelect,
+  renderLimit = DEFAULT_RENDER_LIMIT,
 }: TopAnomaliesTableProps) {
-  const sorted = [...records].sort(
+  const ranked = [...records].sort(
     (a, b) =>
-      (toFiniteNumber(a.anomaly_score) ?? 0) -
-      (toFiniteNumber(b.anomaly_score) ?? 0),
+      (toFiniteNumber(b.anomaly_score) ?? 0) -
+      (toFiniteNumber(a.anomaly_score) ?? 0),
   );
+  const sorted = ranked.slice(0, renderLimit);
+  const subtitle =
+    ranked.length > sorted.length
+      ? `${sorted.length} of ${ranked.length} matching alerts, most deviant first · narrow the filters to reach the rest`
+      : `${ranked.length} matching alert${ranked.length === 1 ? "" : "s"}, most deviant first · click a row for details and AI briefing`;
 
   return (
     <Card
       title="Top Anomaly Events"
-      subtitle="Critical signals across the universe · click a row for details and AI briefing"
+      subtitle={subtitle}
       className="anomaly-table events-table w-full overflow-hidden"
       data-component="events-table"
     >

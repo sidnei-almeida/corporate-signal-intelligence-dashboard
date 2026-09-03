@@ -1,9 +1,5 @@
 import type { AnomalyRecord, AnomalySeverity } from "./types";
-import {
-  formatTicker,
-  getAnomalySeverity,
-  splitAnomalyTypes,
-} from "./formatters";
+import { formatTicker, severityOf, splitAnomalyTypes } from "./formatters";
 
 export interface AnomalyFilterState {
   ticker: string;
@@ -23,8 +19,9 @@ export function filterAnomalyRecords(
       }
     }
     if (filters.severity) {
-      const severity = getAnomalySeverity(record.anomaly_score);
-      if (severity !== (filters.severity as AnomalySeverity)) {
+      // The tier the API attached, falling back to the local cutoffs, so the filter and
+      // the badge in the row can never disagree.
+      if (severityOf(record) !== (filters.severity as AnomalySeverity)) {
         return false;
       }
     }
