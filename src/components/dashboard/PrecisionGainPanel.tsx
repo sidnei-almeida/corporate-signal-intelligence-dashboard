@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/Card";
 import { METRIC_CELL, SECTION_LABEL } from "@/lib/cardVisuals";
+import { CHART_ACCENT, CHART_GRAPHITE } from "@/lib/chartTheme";
 import { TYPE_DATA_ACCENT } from "@/lib/typography";
 import type { ValidationProtocol } from "@/lib/types";
 
@@ -39,9 +40,9 @@ function Bar({
           className="h-full rounded-full"
           style={{
             width: `${width}%`,
-            background: accent
-              ? "linear-gradient(90deg, #00D4FF 0%, #0066FF 100%)"
-              : "var(--border-subtle)",
+            // Same two colours the bar charts use: the warm accent carries the subject of
+            // the comparison, graphite carries everything measured against it.
+            background: accent ? CHART_ACCENT : CHART_GRAPHITE,
           }}
         />
       </div>
@@ -90,7 +91,11 @@ export function PrecisionGainPanel({
       fillHeight={fillHeight}
       className={fillHeight ? "h-full w-full" : "w-full"}
     >
-      <div className="flex flex-col gap-4">
+      <div
+        className={`flex flex-col gap-4 ${
+          fillHeight ? "min-h-0 flex-1 justify-between" : ""
+        }`}
+      >
         <div className="flex flex-col gap-3.5">
           <Bar
             label="Model queue"

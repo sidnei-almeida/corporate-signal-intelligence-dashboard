@@ -112,6 +112,10 @@ export interface HealthResponse {
   database_connected?: boolean;
   database_populated?: boolean;
   model_available?: boolean;
+  /** False when GROQ_API_KEY is unset: every other page works, briefings return 503. */
+  briefings_available?: boolean;
+  rows?: number;
+  tickers?: number;
 }
 
 export interface ScoreInfo {

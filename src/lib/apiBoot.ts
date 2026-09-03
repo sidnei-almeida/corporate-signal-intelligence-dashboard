@@ -10,8 +10,11 @@ export type BootPhase =
   | "ready"
   | "error";
 
-const WAKE_INTERVAL_MS = 3_500;
-const MAX_WAKE_ATTEMPTS = 45;
+// The API is served by this deployment, so a failure here is a real failure rather than
+// a container still starting. A couple of quick retries cover a serverless cold start;
+// beyond that, retrying only delays the error the user needs to see.
+const WAKE_INTERVAL_MS = 600;
+const MAX_WAKE_ATTEMPTS = 5;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -29,7 +32,7 @@ export interface BootResult {
 }
 
 /**
- * Polls /health until Render responds 200 (cold-start wake-up).
+ * Polls /health until the in-app API answers, then reads the model metadata.
  */
 export async function wakeIntelligenceApi(
   onProgress?: (progress: BootProgress) => void,
@@ -40,8 +43,6 @@ export async function wakeIntelligenceApi(
     attempt: 0,
     message: "Checking backend",
   });
-
-  await sleep(500);
 
   let health: HealthResponse | null = null;
   let lastError: ApiError | null = null;
@@ -54,7 +55,7 @@ export async function wakeIntelligenceApi(
     onProgress?.({
       phase: "waking",
       attempt,
-      message: attempt === 1 ? "Waking API" : `Waking API (${attempt})`,
+      message: attempt === 1 ? "Starting API" : `Starting API (${attempt})`,
     });
 
     try {
@@ -76,11 +77,7 @@ export async function wakeIntelligenceApi(
   if (!health) {
     throw (
       lastError ??
-      new ApiError(
-        "The API did not respond in time. The Render service may still be starting — please retry.",
-        0,
-        "/health",
-      )
+      new ApiError("The API did not respond. Please retry.", 0, "/health")
     );
   }
 
@@ -97,6 +94,9 @@ export async function wakeIntelligenceApi(
     modelInfo = { model_exists: false };
   }
 
+  // The remaining steps are presentational. Health and model metadata now answer in a
+  // few milliseconds, so without a short pause the boot sequence would flash past before
+  // it could be read.
   onProgress?.({
     phase: "loading",
     attempt: 0,
