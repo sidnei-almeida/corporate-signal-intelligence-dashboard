@@ -2,7 +2,7 @@ export const APP_NAME = "Corporate Signal Intelligence";
 export const APP_TAGLINE =
   "Attention prioritisation for public company monitoring — validated against a prospective criterion.";
 export const APP_BOOT_FOOTER =
-  "This may take a few seconds while the backend wakes up.";
+  "Scoring and briefings run inside this deployment.";
 
 export const SIDEBAR_FOOTER_SOURCES = "Stooq · SEC EDGAR";
 export const SIDEBAR_FOOTER_STACK = "Conditional score · AI Briefings";

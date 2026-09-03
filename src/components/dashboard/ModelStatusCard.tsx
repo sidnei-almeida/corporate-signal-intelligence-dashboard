@@ -57,7 +57,9 @@ export function ModelStatusCard({
     : "Unavailable";
   const typeLabel = modelInfo.model_type ?? "Pipeline";
   const features = modelInfo.expected_feature_count ?? "—";
-  const briefingModel = "Groq configured";
+  // The briefing key lives on the server, so /health is the only place the client can
+  // learn whether briefings will actually answer.
+  const briefingModel = health?.briefings_available === false ? "Not configured" : "Groq configured";
 
   return (
     <Card
@@ -105,7 +107,7 @@ export function ModelStatusCard({
           <MetricCell className="pipeline-item spec-item" label="Features" value={String(features)} mono />
           <MetricCell className="pipeline-item spec-item" label="Output" value="Score + Type" />
           <MetricCell className="pipeline-item spec-item" label="AI Briefing" value="Groq" />
-          <MetricCell className="pipeline-item spec-item" label="Backend" value="FastAPI" />
+          <MetricCell className="pipeline-item spec-item" label="Backend" value="Next routes" />
           <MetricCell className="pipeline-item spec-item" label="AI model" value={briefingModel} />
           <MetricCell className="pipeline-item spec-item" label="Artifact" value={String(artifactLabel)} truncate />
         </dl>
@@ -143,12 +145,12 @@ export function ModelStatusCard({
             <li
               className={`flex items-center justify-between gap-3 border-t pt-1.5 text-xs ${CARD_DIVIDER}`}
             >
-              <span className={SECTION_LABEL}>Database</span>
+              <span className={SECTION_LABEL}>Data source</span>
               <span className={TYPE_DATA_ACCENT}>{dataSource}</span>
             </li>
             <li className="flex items-center justify-between gap-3 text-xs">
               <span className={SECTION_LABEL}>Deployment</span>
-              <span className={SECTION_VALUE}>Render · FastAPI</span>
+              <span className={SECTION_VALUE}>Vercel · in-app inference</span>
             </li>
           </ul>
         </div>

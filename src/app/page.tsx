@@ -43,12 +43,12 @@ export default function OverviewPage() {
         budget={budget}
       />
 
-      <div className="grid w-full grid-cols-2 items-start gap-5 charts-row charts-grid">
-        <div className="min-w-0">
-          <AnomalyTypeChart types={anomalyTypes} />
+      <div className="grid w-full grid-cols-2 items-stretch gap-5 charts-row charts-grid">
+        <div className="flex min-w-0">
+          <AnomalyTypeChart types={anomalyTypes} fillHeight />
         </div>
-        <div className="min-w-0">
-          <PrecisionGainPanel protocol={protocol} />
+        <div className="flex min-w-0">
+          <PrecisionGainPanel protocol={protocol} fillHeight />
         </div>
       </div>
 

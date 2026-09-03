@@ -16,7 +16,7 @@ interface BootScreenProps {
 
 const STEPS: { id: BootPhase; label: string }[] = [
   { id: "checking", label: "Checking backend" },
-  { id: "waking", label: "Waking API" },
+  { id: "waking", label: "Starting API" },
   { id: "verifying", label: "Verifying anomaly model" },
   { id: "loading", label: "Loading market signals" },
   { id: "preparing", label: "Preparing AI briefing service" },

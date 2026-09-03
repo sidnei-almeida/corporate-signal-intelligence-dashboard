@@ -22,12 +22,12 @@ import {
   buildBriefingRecordPayload,
 } from "@/lib/briefingPayload";
 
-/** Same-origin proxy in dev/production — avoids browser CORS to Render. */
+/**
+ * The API is served by this deployment's own route handlers under src/app/api-backend.
+ * Scoring, the panel and the briefing prompt all run here, so there is no external model
+ * host to reach and nothing to configure per environment.
+ */
 const API_BASE_URL = "/api-backend";
-
-const REMOTE_API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "https://corporate-signal-intelligence.onrender.com";
 
 export class ApiError extends Error {
   constructor(
@@ -56,7 +56,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch {
     throw new ApiError(
-      "Unable to reach the Corporate Anomaly Monitor API. Check your connection or try again after the Render instance wakes up.",
+      "Unable to reach the Corporate Anomaly Monitor API. Check your connection and try again.",
       0,
       path,
     );
@@ -205,4 +205,4 @@ export function generateBriefingFromRecord(
   });
 }
 
-export { API_BASE_URL, REMOTE_API_URL };
+export { API_BASE_URL };

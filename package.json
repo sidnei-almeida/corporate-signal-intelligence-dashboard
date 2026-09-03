@@ -7,7 +7,9 @@
     "dev:clean": "rm -rf .next && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export:model": "python scripts/export_model_artifacts.py",
+    "verify:model": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/verify_model_parity.mts"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
