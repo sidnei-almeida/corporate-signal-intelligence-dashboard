@@ -36,8 +36,8 @@ export function TopCompanyEvents({
     .filter((r) => r.is_anomaly !== false)
     .sort(
       (a, b) =>
-        (toFiniteNumber(a.anomaly_score) ?? 0) -
-        (toFiniteNumber(b.anomaly_score) ?? 0),
+        (toFiniteNumber(b.anomaly_score) ?? 0) -
+        (toFiniteNumber(a.anomaly_score) ?? 0),
     );
 
   return (

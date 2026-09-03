@@ -26,7 +26,7 @@ export default function AnomaliesPage() {
     budgetPct,
     changeBudget,
     refresh,
-  } = useAnomaliesData(200);
+  } = useAnomaliesData(8000);
 
   const [tickerFilter, setTickerFilter] = useState("");
   const [severityFilter, setSeverityFilter] = useState("");

@@ -21,7 +21,11 @@ export function GET(request: Request) {
   const { records, budget } = queryByBudget({
     budgetPct: numberParam(params, "budget_pct", 1),
     ticker,
-    limit: limitParam(params, 100, 500),
+    // The whole queue at the chosen budget, not a ranked head: the page filters by
+    // ticker and severity client-side, and a truncated head is all-critical by
+    // construction, so those filters would silently return nothing. 8000 clears the
+    // widest budget the export covers.
+    limit: limitParam(params, 100, 8000),
   });
 
   const withTier = withSeverity(records);

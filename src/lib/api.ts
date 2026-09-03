@@ -165,6 +165,18 @@ export function getAnomalyTypes(): Promise<AnomalyTypeCount[]> {
   return apiFetch<AnomalyTypeCount[]>("/anomalies/types");
 }
 
+/**
+ * Every flagged issuer-day, most deviant first.
+ *
+ * The same set `getTickerAnomalies` serves per issuer, so an unfiltered list and a
+ * ticker-filtered one are drawn from one population. `getTopAnomalies` is a ranked head
+ * and is critical-only by construction, so it must not back a list that carries a
+ * severity filter.
+ */
+export function getAllAnomalies(limit = 1000): Promise<AnomalyListResponse> {
+  return apiFetch<AnomalyListResponse>(`/anomalies?limit=${limit}`);
+}
+
 export function getTickerAnomalies(ticker: string): Promise<AnomalyListResponse> {
   return apiFetch<AnomalyListResponse>(
     `/anomalies/${encodeURIComponent(ticker.trim().toUpperCase())}`,

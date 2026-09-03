@@ -3,7 +3,7 @@
 import { Select } from "@/components/ui/Select";
 import { ANOMALY_TYPE_LABELS } from "@/lib/constants";
 import type { AnomalySeverity } from "@/lib/types";
-import { formatTicker } from "@/lib/formatters";
+import { SEVERITY_LABELS, formatTicker } from "@/lib/formatters";
 
 interface AnomalyFiltersProps {
   tickers: string[];
@@ -15,7 +15,16 @@ interface AnomalyFiltersProps {
   onAnomalyTypeChange: (value: string) => void;
 }
 
-const SEVERITIES: AnomalySeverity[] = ["critical", "high", "moderate", "watch"];
+// "below budget" belongs here: the tiers stop at the 1% cutoff, so any budget wider
+// than that admits rows beneath the watch line, and without this option they cannot be
+// selected at all.
+const SEVERITIES: AnomalySeverity[] = [
+  "critical",
+  "high",
+  "moderate",
+  "watch",
+  "below budget",
+];
 
 export function AnomalyFilters({
   tickers,
@@ -48,7 +57,7 @@ export function AnomalyFilters({
         <option value="">All severities</option>
         {SEVERITIES.map((s) => (
           <option key={s} value={s}>
-            {s}
+            {SEVERITY_LABELS[s]}
           </option>
         ))}
       </Select>

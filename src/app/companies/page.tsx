@@ -46,8 +46,8 @@ export default function CompaniesPage() {
         .filter((r) => r.is_anomaly !== false)
         .sort(
           (a, b) =>
-            (toFiniteNumber(a.anomaly_score) ?? 0) -
-            (toFiniteNumber(b.anomaly_score) ?? 0),
+            (toFiniteNumber(b.anomaly_score) ?? 0) -
+            (toFiniteNumber(a.anomaly_score) ?? 0),
         )[0] ?? null
     );
   }, [selectedTicker, tickerAnomalies]);
