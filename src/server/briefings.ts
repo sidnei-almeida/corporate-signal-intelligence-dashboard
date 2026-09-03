@@ -13,7 +13,30 @@ import { severityThresholds, severityTier } from "@/server/panel";
 const GROQ_BASE_URL = process.env.GROQ_BASE_URL ?? "https://api.groq.com/openai/v1";
 const GROQ_URL = `${GROQ_BASE_URL.replace(/\/$/, "")}/chat/completions`;
 
-export const GROQ_MODEL = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
+export const GROQ_MODEL = process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
+
+/**
+ * Room for the memo, not for the model's deliberation.
+ *
+ * The briefing itself runs to roughly 700–900 tokens. Reasoning models spend completion
+ * budget before they write anything, so a ceiling tuned to the memo alone truncates them
+ * mid-section.
+ */
+const MAX_COMPLETION_TOKENS = 4096;
+
+/**
+ * Parameters only the gpt-oss models accept, applied by model id so `GROQ_MODEL` can
+ * still be pointed at a non-reasoning model without the request being rejected.
+ *
+ * The briefing is a formatting task over data that is already resolved — which deviation
+ * dominated and which severity tier applies are both computed before the call — so the
+ * low effort setting spends nothing on deliberation the payload has already done. The
+ * reasoning trace is dropped rather than parsed: only `content` is ever rendered.
+ */
+function reasoningOptions(model: string): Record<string, unknown> {
+  if (!model.includes("gpt-oss")) return {};
+  return { reasoning_effort: "low", include_reasoning: false };
+}
 
 export const SYSTEM_PROMPT = `You are a senior analyst on a corporate monitoring desk.
 You write short briefings that explain why a specific trading day was put in front of a
@@ -228,7 +251,8 @@ export async function generateExecutiveBriefing(
     body: JSON.stringify({
       model: GROQ_MODEL,
       temperature: 0.2,
-      max_tokens: 1100,
+      max_completion_tokens: MAX_COMPLETION_TOKENS,
+      ...reasoningOptions(GROQ_MODEL),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: buildUserPrompt(record, companyContext) },
@@ -242,10 +266,17 @@ export async function generateExecutiveBriefing(
   }
 
   const payload = (await response.json()) as {
-    choices?: { message?: { content?: string } }[];
+    choices?: { finish_reason?: string; message?: { content?: string } }[];
   };
-  const content = payload.choices?.[0]?.message?.content?.trim();
+  const choice = payload.choices?.[0];
+  const content = choice?.message?.content?.trim();
   if (!content) throw new Error("Groq returned an empty briefing.");
+
+  // A memo that stops before its limits and disclaimer sections reads as a finding rather
+  // than as triage, which is the one thing the prompt is built to prevent. Fail instead.
+  if (choice?.finish_reason === "length") {
+    throw new Error("Groq truncated the briefing at the completion limit.");
+  }
   return content;
 }
 
