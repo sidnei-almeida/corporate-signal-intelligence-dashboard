@@ -182,10 +182,14 @@ Create `.env.local`:
 
 ```env
 GROQ_API_KEY=your-key
-GROQ_MODEL=llama-3.3-70b-versatile   # optional
+GROQ_MODEL=openai/gpt-oss-120b       # optional, this is the default
 ```
 
 The key is read server-side only and never reaches the browser. Without it every page still works; `/briefings` returns 503 and the pipeline card reports the briefing service as not configured.
+
+Briefings run on **gpt-oss-120b**. It is a reasoning model, so the request asks for low reasoning effort — which deviation dominated and which severity tier applies are both resolved before the call, leaving the model a formatting task — and drops the reasoning trace, since only `content` is rendered. The completion ceiling is 4096 tokens against a memo of roughly 700–900, and a response that still hits the ceiling is rejected rather than shown: a memo cut off before its limits and disclaimer sections reads as a finding instead of as triage.
+
+`GROQ_MODEL` can be pointed at a non-reasoning model; the reasoning parameters are applied by model id, so nothing invalid is sent.
 
 ---
 
